@@ -1,8 +1,9 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from database import save_file, get_file, add_user, get_all_users, total_users
 from keep_alive import keep_alive
+import asyncio  # ✅ ADDED (for auto delete)
 
 app = Client(
     "filelinkbot",
@@ -24,9 +25,45 @@ async def start(client, message: Message):
         if not data:
             return await message.reply_text("❌ File not found.")
 
-        return await message.reply_cached_media(data["file_id"])
+        caption = "📁 Here is your file\n\n📢 Channel: @Anime_UpdatesAU"
+
+        buttons = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("📢 Updates", url="https://t.me/Anime_UpdatesAU")]]
+        )
+
+        # ✅ FIX: SEND BASED ON FILE TYPE
+        if data.get("file_type") == "video":
+            sent = await message.reply_video(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons
+            )
+
+        elif data.get("file_type") == "audio":
+            sent = await message.reply_audio(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons
+            )
+
+        else:
+            sent = await message.reply_document(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons
+            )
+
+        # ✅ AUTO DELETE AFTER 60 SECONDS
+        await asyncio.sleep(300)
+        try:
+            await sent.delete()
+        except:
+            pass
+
+        return
 
     await message.reply_text("Welcome To Luffy Store Bot\n\nOwner : @Mr_Mohammed_29")
+
 
 # OWNER UPLOAD ONLY
 @app.on_message(
@@ -34,16 +71,28 @@ async def start(client, message: Message):
     filters.user(OWNER_ID)
 )
 async def save_media(client, message: Message):
-    file = message.document or message.video or message.audio
+
+    # ✅ DETECT FILE TYPE
+    if message.video:
+        file = message.video
+        file_type = "video"
+    elif message.audio:
+        file = message.audio
+        file_type = "audio"
+    else:
+        file = message.document
+        file_type = "document"
 
     file_id = file.file_id
     file_unique_id = file.file_unique_id
 
-    await save_file(file_id, file_unique_id)
+    # ✅ SAVE WITH TYPE
+    await save_file(file_id, file_unique_id, file_type)
 
     link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
 
     await message.reply_text(f"🔗 Link:\n{link}")
+
 
 # BLOCK OTHERS
 @app.on_message(
@@ -53,13 +102,15 @@ async def save_media(client, message: Message):
 async def block_users(client, message: Message):
     await message.reply_text("❌ Only owner can upload files.")
 
-# STATS
+
+# STATS (UNCHANGED)
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
     total = await total_users()
     await message.reply_text(f"📊 Users: {total}")
 
-# BROADCAST
+
+# BROADCAST (UNCHANGED)
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
     if not message.reply_to_message:
@@ -79,6 +130,7 @@ async def broadcast(client, message: Message):
             failed += 1
 
     await message.reply_text(f"✅ Done\nSent: {sent}\nFailed: {failed}")
+
 
 # RUN
 keep_alive()
