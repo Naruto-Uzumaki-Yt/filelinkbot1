@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: filelinkbot
+    runtime: docker
+    plan: free
+    autoDeploy: true
