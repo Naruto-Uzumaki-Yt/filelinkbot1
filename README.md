@@ -18,17 +18,20 @@
  BOT_USERNAME (without  @)
  
 ----
+
 **NOTE**
+
     Don't Add Values In Config.py 
+    
 ----
 ----
   **Bot Commands**
 
-  /start - start the bot, and direct send the file bot will give you the ink
+  /start - start the bot, direct send the file bot will give you the ink [**Only Owner Can Send The File**]
   
-  /stats - check users
+  /stats - check users [Owner Only]
   
-  /broadcast - broadcast to the users
+  /broadcast - broadcast to the users [Owner Only]
   
 ----
 ----
