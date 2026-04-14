@@ -139,6 +139,7 @@ async def stats(client, message: Message):
 
 
 # BROADCAST (UNCHANGED)
+# BROADCAST (UNCHANGED)
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
 
@@ -163,6 +164,10 @@ async def broadcast(client, message: Message):
         f"📢 Broadcast Complete\n\n✅ Sent: {sent}\n❌ Failed: {failed}"
     )
 
+@app.on_message(filters.private & ~filters.service)
+async def auto_add_user(client, message: Message):
+    if message.from_user:
+        await add_user(message.from_user.id)
 @app.on_message(filters.private & ~filters.service)
 async def auto_add_user(client, message: Message):
     if message.from_user:
