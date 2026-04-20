@@ -1,8 +1,10 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
+from pyrogram.enums import ParseMode
 from database import save_file, get_file, add_user, get_all_users, total_users
 from keep_alive import keep_alive
+
 import asyncio
 import time
 
@@ -43,7 +45,10 @@ async def start(client, message: Message):
             return await message.reply_text("🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ.")
 
         original_caption = data.get("caption", "")
-        caption = f"{original_caption}\n\n›› Cʜᴀɴɴᴇʟ : @Anime_UpdatesAU"
+        caption = (
+    f" [{original_caption}](https://t.me/Anime_UpdatesAU)\n\n"
+    f"›› Cʜᴀɴɴᴇʟ : [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+)
 
         buttons = InlineKeyboardMarkup(
             [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
@@ -53,22 +58,33 @@ async def start(client, message: Message):
             sent = await message.reply_video(
                 data["file_id"],
                 caption=caption,
-                reply_markup=buttons
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
             )
 
         elif data.get("file_type") == "audio":
             sent = await message.reply_audio(
                 data["file_id"],
                 caption=caption,
-                reply_markup=buttons
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
             )
 
         else:
             sent = await message.reply_document(
                 data["file_id"],
                 caption=caption,
-                reply_markup=buttons
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
             )
+
+        warn = await message.reply_text(
+    " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+    " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
+    " ›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs.\n\n"
+    " ›› 𝗡𝗼𝘁𝗲: ᴜsᴇ 𝗩𝗟𝗖 𝗣𝗹𝗮𝘆𝗲𝗿 ᴏʀ 𝗠𝗫 𝗣𝗹𝗮𝘆𝗲𝗿 ғᴏʀ ʙᴇsᴛ ᴇxᴘᴇʀɪᴇɴᴄᴇ.",
+    parse_mode=ParseMode.MARKDOWN
+        )
 
         # ✅ ADDED AFTER FILE ANIMATION
         m2 = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻. . .")
@@ -78,22 +94,23 @@ async def start(client, message: Message):
         await m2.delete()
 
         await asyncio.sleep(300)
+
         try:
-            await sent.delete()
+           await sent.delete()
+           await warn.delete()
         except:
             pass
 
-        return
-
     # ✅ UPDATED START MESSAGE WITH BUTTONS
     await message.reply_text(
-        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : [ᴍᴏʜᴀᴍᴍᴇᴅ](https://t.me/Mr_Mohammed_29)",
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
                 [InlineKeyboardButton("ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about")]
             ]
-        )
+        ),
+        parse_mode=ParseMode.MARKDOWN
     )
 
 
@@ -174,7 +191,7 @@ async def broadcast(client, message: Message):
     sent = 0
     failed = 0
 
-    status = await message.reply_text("⏳️ 𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱.....")  # ✅ INSIDE FUNCTION
+    status = await message.reply_text("⏳️ 𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱.....")  
 
     for user_id in users:
         try:
@@ -196,35 +213,43 @@ async def broadcast(client, message: Message):
 async def auto_add_user(client, message: Message):
     if message.from_user:
         await add_user(message.from_user.id)
-        
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
 async def about_callback(client, query):
     await query.message.edit_text(
-        "⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟\n\n‣ ᴍʏ ɴᴀᴍᴇ : @AU_Luffy_Store_bot\n‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : @Mr_Mohammed_29(ᴍᴏʜᴀᴍᴍᴇᴅ)\n‣ ʟɪʙʀᴀʀʏ : ᴘʏʀᴏɢʀᴀᴍ\n‣ ʟᴀɴɢᴜᴀɢᴇ : ᴘʏᴛʜᴏɴ 3\n‣ ᴅᴀᴛᴀ ʙᴀsᴇ : ᴍᴏɴɢᴏ ᴅʙ\n‣ ʙᴏᴛ sᴇʀᴠᴇʀ : @BotsServerDead\n‣ᴜᴘᴅᴀᴛᴇs : @Anime_UpdatesAU\n‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : [sᴛᴀʙʟᴇ]",
+        "⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟\n\n"
+        "‣ ᴍʏ ɴᴀᴍᴇ : [ᴀᴜ ʟᴜғғʏ sᴛᴏʀᴇ ʙᴏᴛ](https://t.me/AU_Luffy_Store_bot)\n"
+        "‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : [ᴍᴏʜᴀᴍᴍᴇᴅ](https://t.me/Mr_Mohammed_29)\n"
+        "‣ ʟɪʙʀᴀʀʏ : [ᴘʏʀᴏɢʀᴀᴍ 𝟸.𝟶](https://pypi.org/project/Pyrogram/)\n"
+        "‣ ʟᴀɴɢᴜᴀɢᴇ : [ᴘʏᴛʜᴏɴ 𝟹](https://www.python.org/downloads/)\n"
+        "‣ ᴅᴀᴛᴀ ʙᴀsᴇ : [ᴍᴏɴɢᴏ ᴅʙ](https://www.mongodb.com/)\n"
+        "‣ ʙᴏᴛ sᴇʀᴠᴇʀ : [Bᴏᴛs Sᴇʀᴠᴇʀ](https://t.me/BotsServerDead)\n"
+        "‣ ᴜᴘᴅᴀᴛᴇs : [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)\n"
+        "‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : ᴠ𝟸.𝟶 [sᴛᴀʙʟᴇ](https://t.me/BotsServerDead)",
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("ʜᴏᴍᴇ", callback_data="home")]]
-        )
+        ),
+        parse_mode=ParseMode.MARKDOWN
     )
 
 
-# ✅ ADDED HOME HANDLER
+# ✅ ADDED HOME HANDLER (UNCHANGED)
 @app.on_callback_query(filters.regex("home"))
 async def home_callback(client, query):
     await query.message.edit_text(
-        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲ʟ 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : [ᴍᴏʜᴀᴍᴍᴇᴅ](https://t.me/Mr_Mohammed_29)",
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
                 [InlineKeyboardButton("ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about")]
             ]
-        )
+        ),
+        parse_mode=ParseMode.MARKDOWN
     )
 
-
-# RUN
+#RUN
 keep_alive()
 app.run()
 
-#----Don't Remove Credit----# 
-#----owner @Mr_Mohammed_29----# 
+#don't remove credits 
+#Owner @Mr_Mohammed_29 
