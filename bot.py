@@ -108,29 +108,30 @@ async def start(client, message: Message):
            await warn.delete()
         except:
             pass
-
+        return
+        
     # ✅ UPDATED START MESSAGE WITH BUTTONS
-photo = random.choice(IMAGES)
+    photo = random.choice(IMAGES)
 
-await message.reply_photo(
-    photo=photo,
-    caption=(
-        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n"
-        "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
-    ),
-    reply_markup=InlineKeyboardMarkup(
-        [
+    await message.reply_photo(
+        photo=photo,
+        caption=(
+            "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n"
+            "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
+        ),
+        reply_markup=InlineKeyboardMarkup(
             [
-                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU"),
-                InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")
-            ],
-            [
-                InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/Mr_Mohammed_29")
+                [
+                    InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU"),
+                    InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")
+                ],
+                [
+                    InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/Mr_Mohammed_29")
+                ]
             ]
-        ]
-    ),
-    parse_mode=ParseMode.MARKDOWN
-)
+        ),
+        parse_mode=ParseMode.MARKDOWN
+    )
 
 # OWNER UPLOAD ONLY
 @app.on_message(
