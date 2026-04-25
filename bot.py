@@ -14,7 +14,7 @@ IMAGES = [
 ]
 from database import (
     save_file, get_file, add_user, get_all_users, total_users,
-    add_admin_db, remove_admin_db, is_admin 
+    add_admin_db, remove_admin_db, is_admin, get_all_admins
 )
 
 from keep_alive import keep_alive
@@ -137,7 +137,7 @@ async def start(client, message: Message):
     await message.reply_photo(
         photo=photo,
         caption=(
-            "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n"
+            "𝗛𝗲𝗹𝗹𝗼 ♡,\n\n"
             "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
         ),
         reply_markup=InlineKeyboardMarkup(
@@ -278,10 +278,24 @@ async def add_admin(client, message: Message):
     except:
         return await message.reply_text("‼️ ɪɴᴠᴀʟɪᴅ ᴜsᴇʀ ɪᴅ")
 
-    await add_admin_db(user_id)
+    user = await client.get_users(user_id)
+
+    name = user.first_name
+    username = user.username if user.username else "None"
+
+    await add_admin_db(user_id, name, username)
 
     await message.reply_text(f"✅️ ᴀᴅᴍɪɴ ɪs ᴀᴅᴅᴇᴅ : {user_id}")
     
+    # Send message to that user
+    try:
+        await client.send_message(
+            chat_id=user_id,
+            text="🎉 ᴄᴏɴɢʀᴀᴛᴜʟᴀᴛɪᴏɴs ʏᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴘʀᴏᴍᴏᴛᴇᴅ ᴛᴏ 𝗔𝗗𝗠𝗜𝗡\n\nYᴏᴜ ᴄᴀɴ ɴᴏᴡ ᴜᴘʟᴏᴀᴅ ғɪʟᴇs ᴛᴏ ᴛʜᴇ ʙᴏᴛ ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs."
+        )
+    except Exception as e:
+        print(f"Fᴀɪʟᴇᴅ Tᴏ Nᴏᴛɪғʏ Aᴅᴍɪɴ : {e}")
+        
 # REMOVE ADMIN 
 @app.on_message(filters.command("removeadmin") & filters.private)
 async def remove_admin(client, message: Message):
@@ -300,6 +314,34 @@ async def remove_admin(client, message: Message):
     await remove_admin_db(user_id)
 
     await message.reply_text(f"✅️ ᴀᴅᴍɪɴ ɪs ʀᴇᴍᴏᴠᴇᴅ : {user_id}")
+
+#ADMIN LIST
+@app.on_message(filters.command("adminlist"))
+async def admin_list(client, message: Message):
+
+    if message.from_user.id != OWNER_ID:
+        return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ")
+
+    admins = await get_all_admins()
+
+    if not admins:
+        return await message.reply_text("🔎 Nᴏ Aᴅᴍɪɴs Fᴏᴜɴᴅ")
+
+    text = "👑 **Aᴅᴍɪɴs Lɪsᴛ**\n\n"
+
+    for i, admin in enumerate(admins, start=1):
+
+        name = admin.get("name", "Unknown")
+        username = admin.get("username", "None")
+        user_id = admin.get("user_id")
+
+        text += (
+            f"{i}. Name: {name}\n"
+            f"   Username: @{username if username != 'None' else 'no_username'}\n"
+            f"   ID: {user_id}\n\n"
+        )
+
+    await message.reply_text(text)
     
 # ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
@@ -331,7 +373,7 @@ async def home_callback(client, query):
         media=InputMediaPhoto(
             media=photo,
             caption=(
-                "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n"
+                "𝗛𝗲𝗹𝗹𝗼 ♡,\n\n"
                 "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
             ),
             parse_mode=ParseMode.MARKDOWN
