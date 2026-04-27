@@ -72,7 +72,8 @@ async def start(client, message: Message):
               data["file_id"],
               caption=caption,
               reply_markup=buttons,
-              parse_mode=ParseMode.MARKDOWN
+              thumb=data.get("thumb"),
+              supports_streaming=True
         )
 
         elif data.get("file_type") == "audio":
@@ -195,7 +196,7 @@ async def save_media(client, message: Message):
     file_id = file.file_id
     file_unique_id = file.file_unique_id
 
-    await save_file(file_id, file_unique_id, file_type, original_caption)
+    await save_file(file_id, file_unique_id, file_type, original_caption, thumb)
 
     link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
 
