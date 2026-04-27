@@ -174,27 +174,29 @@ async def save_media(client, message: Message):
         file = message.video
         file_type = "video"
         thumb = file.thumbs[-1].file_id if file.thumbs else None
-    else:
-        thumb = None
 
-    elif message.audio:
+   elif message.audio:
         file = message.audio
         file_type = "audio"
+        thumb = None
 
-    elif message.document:
+   elif message.document:
         file = message.document
         file_type = "document"
+        thumb = None
 
-    elif message.sticker:
+   elif message.sticker:
         file = message.sticker
         file_type = "sticker"
+        thumb = None
 
-    elif message.animation:  # GIF
+   elif message.animation:  # GIF
         file = message.animation
         file_type = "animation"
+        thumb = None
 
-    else:
-        return await message.reply_text("‼️ Uɴsᴜᴘᴘᴏʀᴛᴇᴅ Fᴏʀᴍᴀᴛ")
+   else:
+       return await message.reply_text("‼️ Uɴsᴜᴘᴘᴏʀᴛᴇᴅ Fᴏʀᴍᴀᴛ")
 
     file_id = file.file_id
     file_unique_id = file.file_unique_id
