@@ -169,8 +169,9 @@ async def save_media(client, message: Message):
 
     # Detect file type
     if message.video:
-        file = message.video
-        file_type = "video"
+    file = message.video
+    file_type = "video"
+    thumb = file.thumbs[-1].file_id if file.thumbs else None
 
     elif message.audio:
         file = message.audio
