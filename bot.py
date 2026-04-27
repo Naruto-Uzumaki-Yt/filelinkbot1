@@ -263,7 +263,11 @@ async def broadcast(client, message: Message):
         f"◇ Uɴsᴜᴄᴄᴇssғᴜʟ: {failed}"
     )
     
-@app.on_message(filters.private & ~filters.service & ~filters.command(["addadmin", "removeadmin"]))
+@app.on_message(
+    filters.private &
+    ~filters.service &
+    ~filters.command(["addadmin", "removeadmin", "adminlist"])
+)
 async def auto_add_user(client, message: Message):
     if message.from_user:
         await add_user(message.from_user.id)
