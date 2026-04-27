@@ -68,45 +68,46 @@ async def start(client, message: Message):
         )
 
         if data.get("file_type") == "video":
-          sent = await message.reply_video(
-              data["file_id"],
-              caption=caption,
-              reply_markup=buttons,
-              thumb=data.get("thumb"),
-              supports_streaming=True
-        )
+            sent = await message.reply_video(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons,
+                thumb=data.get("thumb") if data.get("thumb") else None,
+                supports_streaming=True,
+                parse_mode=ParseMode.MARKDOWN
+        ) 
 
         elif data.get("file_type") == "audio":
-          sent = await message.reply_audio(
-              data["file_id"],
-              caption=caption,
-              reply_markup=buttons,
-             parse_mode=ParseMode.MARKDOWN
+            sent = await message.reply_audio(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
         )
 
         elif data.get("file_type") == "document":
-          sent = await message.reply_document(
-              data["file_id"],
-              caption=caption,
-              reply_markup=buttons,
-              parse_mode=ParseMode.MARKDOWN
+            sent = await message.reply_document(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
         )
- 
+
         elif data.get("file_type") == "sticker":
-          sent = await message.reply_sticker(
-              data["file_id"]
+            sent = await message.reply_sticker(
+                data["file_id"]
         )
 
         elif data.get("file_type") == "animation":  # GIF
-          sent = await message.reply_animation(
-              data["file_id"],
-              caption=caption,
-              reply_markup=buttons,
-              parse_mode=ParseMode.MARKDOWN
+            sent = await message.reply_animation(
+                data["file_id"],
+                caption=caption,
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
         )
 
         else:
-             return await message.reply_text("‼️ Uɴsᴜᴘᴘᴏʀᴛᴇᴅ Fᴏʀᴍᴀᴛ")
+            return await message.reply_text("‼️ Unsupported format")
             
         warn = await message.reply_text(
     " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
@@ -173,6 +174,8 @@ async def save_media(client, message: Message):
         file = message.video
         file_type = "video"
         thumb = file.thumbs[-1].file_id if file.thumbs else None
+    else:
+        thumb = None
 
     elif message.audio:
         file = message.audio
