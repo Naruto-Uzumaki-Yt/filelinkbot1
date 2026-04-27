@@ -318,21 +318,20 @@ async def remove_admin(client, message: Message):
     await message.reply_text(f"✅️ ᴀᴅᴍɪɴ ɪs ʀᴇᴍᴏᴠᴇᴅ : {user_id}")
 
 #ADMIN LIST
-@app.on_message(filters.command("adminlist"))
+@app.on_message(filters.command("adminlist") & filters.private)
 async def admin_list(client, message: Message):
 
     if message.from_user.id != OWNER_ID:
-        return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ")
+        return await message.reply_text("🚫 Only owner can use this")
 
     admins = await get_all_admins()
 
     if not admins:
-        return await message.reply_text("🔎 Nᴏ Aᴅᴍɪɴs Fᴏᴜɴᴅ")
+        return await message.reply_text("❌ No admins found")
 
-    text = "👑 **Aᴅᴍɪɴs Lɪsᴛ**\n\n"
+    text = "👑 Admin List\n\n"
 
     for i, admin in enumerate(admins, start=1):
-
         name = admin.get("name", "Unknown")
         username = admin.get("username", "None")
         user_id = admin.get("user_id")
