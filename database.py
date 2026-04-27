@@ -10,14 +10,15 @@ users = db.users
 admins = db["admins"]
 
 # FILES
-async def save_file(file_id, file_unique_id, file_type, caption):
+async def save_file(file_id, file_unique_id, file_type, caption, thumb=None):
     await files.update_one(
         {"file_unique_id": file_unique_id},
         {"$set": {
             "file_id": file_id,
             "file_unique_id": file_unique_id,
             "file_type": file_type,
-            "caption": caption
+            "caption": caption,
+            "thumb": thumb
         }},
         upsert=True
     )
