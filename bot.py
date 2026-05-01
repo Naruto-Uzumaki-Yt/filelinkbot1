@@ -6,6 +6,7 @@ from pyrogram.enums import ParseMode
 import os
 import sys
 import random
+import psutil
 
 IMAGES = [
     "https://graph.org/file/98245197c3a4185b49dbe-3df65fb012e4195cff.jpg",
@@ -224,11 +225,15 @@ async def stats(client, message: Message):
         [[InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_stats")]]
     )
 
+    process = psutil.Process()
+memory = process.memory_info().rss / (1024 * 1024)
+
     await message.reply_text(
         f"📊 **𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀**\n\n"
         f"👥 Usᴇʀs: {total}\n"
         f"⏱ Uᴘᴛɪᴍᴇ: {hours}h {minutes}m {seconds}s\n"
         f"⚡ Pɪɴɢ: {ping} ms\n"
+        f"🧠 Mᴇᴍᴏʀʏ Usᴀɢᴇ: {memory:.2f} MB\n"
         f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}",
         reply_markup=keyboard
     )
