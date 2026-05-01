@@ -226,7 +226,7 @@ async def stats(client, message: Message):
     )
 
     process = psutil.Process()
-memory = process.memory_info().rss / (1024 * 1024)
+    memory = process.memory_info().rss / (1024 * 1024)
 
     await message.reply_text(
         f"📊 **𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀**\n\n"
@@ -237,7 +237,6 @@ memory = process.memory_info().rss / (1024 * 1024)
         f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}",
         reply_markup=keyboard
     )
-
 # BROADCAST
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
@@ -423,11 +422,15 @@ async def refresh_stats(client, query):
         [[InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_stats")]]
     )
 
+    process = psutil.Process()
+    memory = process.memory_info().rss / (1024 * 1024)
+    
     await query.message.edit_text(
         f"📊 **𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀**\n\n"
         f"👥 Usᴇʀs: {total}\n"
         f"⏱ Uᴘᴛɪᴍᴇ: {hours}h {minutes}m {seconds}s\n"
         f"⚡ Pɪɴɢ: {ping} ms\n"
+        f"🧠 Mᴇᴍᴏʀʏ Usᴀɢᴇ: {memory:.2f} MB\n"
         f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}",
         reply_markup=keyboard
     )
