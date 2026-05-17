@@ -531,10 +531,6 @@ async def load_all_clones():
 
 from pyrogram import idle
 
-# =========================
-# START BOT
-# =========================
-
 async def main():
 
     await app.start()
@@ -551,7 +547,7 @@ async def main():
 
 keep_alive()
 
-asyncio.get_event_loop().run_until_complete(main())
+app.loop.run_until_complete(main())
 
 #don't remove credits 
 #Owner @Mr_Mohammed_29 
