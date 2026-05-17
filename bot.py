@@ -1,4 +1,4 @@
-from pyrogram import Client, filters, idle 
+from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from pyrogram.types import InputMediaPhoto
@@ -529,26 +529,29 @@ async def load_all_clones():
 
             print(f"Clone Error: {e}")
 
+from pyrogram import idle
+
 # =========================
 # START BOT
 # =========================
 
 async def main():
 
-    await load_all_clones()
-
-    print("All Clones Loaded")
-
     await app.start()
 
     print("Main Bot Started")
 
+    await load_all_clones()
+
+    print("All Clones Loaded")
+
     await idle()
 
+    await app.stop()
 
 keep_alive()
 
-app.run(main())
+asyncio.get_event_loop().run_until_complete(main())
 
 #don't remove credits 
 #Owner @Mr_Mohammed_29 
