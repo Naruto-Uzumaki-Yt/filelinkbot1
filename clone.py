@@ -1,4 +1,3 @@
-
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from config import API_ID, API_HASH
@@ -8,51 +7,39 @@ CLONES = {}
 async def start_clone(user_id, bot_token):
 
     if user_id in CLONES:
-        raise Exception("Clone already running")
+        raise Exception("Clone already exists")
 
-    bot = Client(
-        name=f"clone_{user_id}",
+    clone_app = Client(
+        f"clone_{user_id}",
         api_id=API_ID,
         api_hash=API_HASH,
         bot_token=bot_token,
-        in_memory=True
+        no_updates=False
     )
 
-    # START COMMAND
-    @bot.on_message(filters.command("start"))
-    async def start_cmd(client, message: Message):
+    @clone_app.on_message(filters.command("start"))
+    async def start_handler(client, message: Message):
 
         await message.reply_text(
-            f"✅ Hello {message.from_user.first_name}\n\n"
-            f"This is your cloned bot."
+            "✅ Clone Bot Working Successfully"
         )
 
-    # PING COMMAND
-    @bot.on_message(filters.command("ping"))
-    async def ping_cmd(client, message: Message):
+    await clone_app.start()
 
-        await message.reply_text("🏓 Pong")
+    me = await clone_app.get_me()
 
-    await bot.start()
-
-    me = await bot.get_me()
-
-    CLONES[user_id] = bot
-
-    print(f"Started Clone @{me.username}")
+    CLONES[user_id] = clone_app
 
     return me.username
 
 
 async def stop_clone(user_id):
 
-    bot = CLONES.get(user_id)
-
-    if not bot:
+    if user_id not in CLONES:
         return
+
+    bot = CLONES[user_id]
 
     await bot.stop()
 
     del CLONES[user_id]
-
-    print(f"Stopped Clone {user_id}")
