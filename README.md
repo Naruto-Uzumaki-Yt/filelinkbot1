@@ -1,6 +1,6 @@
 ---
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=36BCF7F1&width=435&lines=Welcome+To+MD+Developer+Yt+Github;It+is+Amazing+AU+Luffy+File-Store+Bot;Bot+is+Made+By+Mohammed)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=36BCF7F1&width=435&lines=Welcome+To+Adavance+File+Store+bot;It+is+Amazing+AU+Luffy+File-Store+Bot;Bot+is+Made+By+Mohammed)](https://git.io/typing-svg)
 
 ---
 ---
@@ -50,8 +50,10 @@
  OWNER_ID 
  
  BOT_USERNAME (without  @)
+
+ CHANNEL_ID
  
-----
+ ----
 
 **NOTE**
 
