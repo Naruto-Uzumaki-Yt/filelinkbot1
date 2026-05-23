@@ -183,7 +183,9 @@ async def start(client, message: Message):
         param = message.command[1]
 
     # ================= BATCH LINK =================
+
     try:
+
         decoded = base64.urlsafe_b64decode(
             param + "=" * (-len(param) % 4)
         ).decode()
@@ -195,27 +197,85 @@ async def start(client, message: Message):
             first_id = int(first_id)
             last_id = int(last_id)
 
-            # START ANIMATION
-            x = await message.reply_text(
-                "🔗 ғɪʟᴇs ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ..."
-            )
+            x = await message.reply_text("🔗 ғɪʟᴇs ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ...")
 
             await asyncio.sleep(0.5)
+
             await x.edit_text("✨️ ғɪʟᴇs ʟᴏᴀᴅɪɴɢ...")
+
             await asyncio.sleep(0.5)
+
             await x.edit_text("⏳️ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...")
+
             await asyncio.sleep(0.5)
+
             await x.delete()
 
-            # SEND FILES
             for msg_id in range(first_id, last_id + 1):
 
                 try:
-                    await client.copy_message(
-                        chat_id=message.chat.id,
-                        from_chat_id=CHANNEL_ID,
-                        message_id=msg_id
+
+                    msg = await client.get_messages(CHANNEL_ID, msg_id)
+
+                    original_caption = msg.caption if msg.caption else ""
+
+                    caption = (
+                        f"**{original_caption}**\n\n"
+                        f"**›› Cʜᴀɴɴᴇʟ :** "
+                        f"[ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
                     )
+
+                    buttons = InlineKeyboardMarkup(
+                        [[
+                            InlineKeyboardButton(
+                                "ᴜᴘᴅᴀᴛᴇs",
+                                url="https://t.me/Anime_UpdatesAU"
+                            )
+                        ]]
+                    )
+
+                    if msg.video:
+
+                        await message.reply_video(
+                            msg.video.file_id,
+                            caption=caption,
+                            reply_markup=buttons,
+                            supports_streaming=True,
+                            parse_mode=ParseMode.MARKDOWN
+                        )
+
+                    elif msg.document:
+    
+                        await message.reply_document(
+                            msg.document.file_id,
+                            caption=caption,
+                            reply_markup=buttons,
+                            parse_mode=ParseMode.MARKDOWN
+                        )
+
+elif msg.audio:
+
+    await message.reply_audio(
+        msg.audio.file_id,
+        caption=caption,
+        reply_markup=buttons,
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+elif msg.animation:
+
+    await message.reply_animation(
+        msg.animation.file_id,
+        caption=caption,
+        reply_markup=buttons,
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+elif msg.sticker:
+
+    await message.reply_sticker(
+        msg.sticker.file_id
+    )
 
                     await asyncio.sleep(0.3)
 
@@ -580,7 +640,7 @@ async def about_callback(client, query):
         "‣ ʟɪʙʀᴀʀʏ : [ᴘʏʀᴏɢʀᴀᴍ 𝟸.𝟶](https://pypi.org/project/Pyrogram/)\n"
         "‣ ʟᴀɴɢᴜᴀɢᴇ : [ᴘʏᴛʜᴏɴ 𝟹](https://www.python.org/downloads/)\n"
         "‣ ᴅᴀᴛᴀ ʙᴀsᴇ : [ᴍᴏɴɢᴏ ᴅʙ](https://www.mongodb.com/)\n"
-        "‣ ʙᴏᴛ sᴇʀᴠᴇʀ : [Bᴏᴛs Sᴇʀᴠᴇʀ](https://t.me/BotsServerDead)\n"
+        "‣ ʙᴏᴛ sᴇʀᴠᴇʀ : [Bᴏᴛs Sᴇʀᴠᴇʀ](https://t.me/Anime_UpdatesAU)\n"
         "‣ ᴜᴘᴅᴀᴛᴇs : [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)\n"
         "‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : ᴠ3.𝟶 [sᴛᴀʙʟᴇ](https://t.me/BotsServerDead)",
         reply_markup=InlineKeyboardMarkup(
