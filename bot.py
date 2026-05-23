@@ -7,6 +7,8 @@ import os
 import sys
 import random
 import psutil
+import base64 
+import re
 
 IMAGES = [
     "https://graph.org/file/98245197c3a4185b49dbe-3df65fb012e4195cff.jpg",
@@ -21,7 +23,6 @@ from database import (
 from keep_alive import keep_alive
 import asyncio
 import time
-import base64
 
 START_TIME = time.time()
 BOT_VERSION = "v3.0"
@@ -209,7 +210,7 @@ async def save_media(client, message: Message):
 
     await message.reply_text(f"🔗 𝗛𝗲𝗿𝗲 𝗜𝘀 𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸:\n{link}")
 
-# helper function 
+# helper function
 async def get_message_id(client, message: Message):
     try:
         if not message.text:
@@ -217,16 +218,21 @@ async def get_message_id(client, message: Message):
 
         link = message.text.strip()
 
-        if "t.me/c/" in link:
+        # PRIVATE CHANNEL
+        if "/c/" in link:
             parts = link.split("/")
             chat_id = int("-100" + parts[-2])
             msg_id = int(parts[-1])
             return msg_id, chat_id
 
-        elif "t.me/" in link:
-            parts = link.split("/")
-            msg_id = int(parts[-1])
-            return msg_id, None
+        # PUBLIC CHANNEL OR BOT LINK
+        match = re.search(r"t\.me/([^/]+)/(\d+)", link)
+        if match:
+            username = match.group(1)
+            msg_id = int(match.group(2))
+
+            chat = await client.get_chat(username)
+            return msg_id, chat.id
 
         return None, None
 
@@ -234,7 +240,7 @@ async def get_message_id(client, message: Message):
         return None, None
         
 #BATCH
-@app.on_message(filters.private & filters.command("nbatch"))
+@Client.on_message(filters.private & filters.command("nbatch"))
 async def nbatch(client, message: Message):
 
     admin = await is_admin(message.from_user.id)
@@ -242,67 +248,35 @@ async def nbatch(client, message: Message):
     if not admin and message.from_user.id != OWNER_ID:
         return await message.reply_text("❌ Not allowed")
 
-    db_channels_info = "Send valid Telegram message links only."
+    # STEP 1
+    msg = await message.reply_text("🚀 Send FIRST message link")
+    first = await client.listen(message.chat.id)
 
-    # ================= FIRST MESSAGE =================
-    try:
-        first_message = await client.ask(
-            chat_id=message.from_user.id,
-            text=f"""🚀 Send FIRST message link
-
-{db_channels_info}""",
-            filters=filters.text,
-            timeout=60
-        )
-    except:
-        return
-
-    f_msg_id, source_channel_id = await get_message_id(client, first_message)
+    f_msg_id, source_channel_id = await get_message_id(client, first)
 
     if not f_msg_id:
-        return await first_message.reply_text("❌ Invalid first message link")
+        return await first.reply_text("❌ Invalid first link")
 
-    # ================= LAST MESSAGE =================
-    try:
-        last_message = await client.ask(
-            chat_id=message.from_user.id,
-            text="📩 Send LAST message link",
-            filters=filters.text,
-            timeout=60
-        )
-    except:
-        return
+    # STEP 2
+    await message.reply_text("📩 Send LAST message link")
+    last = await client.listen(message.chat.id)
 
-    l_msg_id, source_channel_id_2 = await get_message_id(client, last_message)
+    l_msg_id, _ = await get_message_id(client, last)
 
     if not l_msg_id:
-        return await last_message.reply_text("❌ Invalid last message link")
+        return await last.reply_text("❌ Invalid last link")
 
-    # ================= VALIDATION =================
     if l_msg_id <= f_msg_id:
-        return await last_message.reply_text("❌ Last message must be greater than first")
+        return await last.reply_text("❌ Last must be greater")
 
-    # ================= GENERATE BATCH LINK =================
+    import base64
     string = f"get-{f_msg_id}-{l_msg_id}"
-    base64_string = base64.urlsafe_b64encode(string.encode()).decode().strip("=")
+    enc = base64.urlsafe_b64encode(string.encode()).decode().strip("=")
 
     bot_username = (await client.get_me()).username
-    link = f"https://t.me/{bot_username}?start={base64_string}"
+    link = f"https://t.me/{bot_username}?start={enc}"
 
-    # ================= RESULT =================
-    await last_message.reply_text(
-        f"✅ Batch Generated\n\n`{link}`",
-        reply_markup=InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton(
-                    "📫 Share",
-                    url=f"https://telegram.me/share/url?url={link}"
-                )
-            ]
-        ])
-    )
-
-#===============================================================#
+    await message.reply_text(f"✅ Batch Generated\n\n`{link}`")
 
 # STATS
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
