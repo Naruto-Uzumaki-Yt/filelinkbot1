@@ -208,108 +208,62 @@ async def save_media(client, message: Message):
 
     await message.reply_text(f"🔗 𝗛𝗲𝗿𝗲 𝗜𝘀 𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸:\n{link}")
 
-# helper function
-import re
+#helper
 
-async def get_message_id(client, message):
-    try:
-        if not message.text:
-            return None, None
+from pyrogram import filters
+from asyncio import Future
 
-        link = message.text.strip()
+class AskMixin:
+    async def ask(self, chat_id, text, filters=filters.text, timeout=60):
+        msg = await self.send_message(chat_id, text)
 
-        # PRIVATE CHANNEL
-        if "/c/" in link:
-            parts = link.split("/")
-            chat_id = int("-100" + parts[-2])
-            msg_id = int(parts[-1])
-            return msg_id, chat_id
+        future = Future()
 
-        # PUBLIC LINK
-        match = re.search(r"t\.me/(?:c/)?([^/]+)/(\d+)", link)
-        if match:
-            msg_id = int(match.group(2))
-            return msg_id, None
+        @self.on_message(filters.chat(chat_id) & filters.text)
+        async def handler(client, message):
+            if not future.done():
+                future.set_result(message)
 
-        return None, None
-
-    except:
-        return None, None
-        
-#BATCH
-import base64
-
-# helper
-def parse_message_link(link: str):
-    try:
-        link = link.strip()
-
-        if "t.me/c/" in link:
-            parts = link.split("/")
-            chat_id = int("-100" + parts[-2])
-            msg_id = int(parts[-1])
-            return msg_id, chat_id
-
-        elif "t.me/" in link:
-            parts = link.split("/")
-            msg_id = int(parts[-1])
-            return msg_id, None
-
-        return None, None
-    except:
-        return None, None
+        try:
+            return await asyncio.wait_for(future, timeout)
+        except:
+            return None
 
 
-@app.on_message(filters.private & filters.command("batch"))
+#batch
+import base64 
+@app.on_message(filters.command("batch") & filters.private)
 async def batch(client, message):
 
     admin = await is_admin(message.from_user.id)
 
     if not admin and message.from_user.id != OWNER_ID:
-        return await message.reply_text("❌ Not allowed")
+        return await message.reply("❌ Not allowed")
 
-    # FIRST LINK
-    first = await client.ask(
-        chat_id=message.chat.id,
-        text="📥 Send FIRST message link",
-        filters=filters.text,
-        timeout=60
-    )
+    await message.reply("📥 Send FIRST message link")
+    first = await client.listen(message.chat.id)
 
-    f_msg_id, _ = parse_message_link(first.text)
+    await message.reply("📤 Send LAST message link")
+    last = await client.listen(message.chat.id)
 
-    if not f_msg_id:
-        return await first.reply_text("❌ Invalid first link")
+    f_msg_id, _ = get_message_id(client, first)
+    l_msg_id, _ = get_message_id(client, last)
 
-    # LAST LINK
-    last = await client.ask(
-        chat_id=message.chat.id,
-        text="📤 Send LAST message link",
-        filters=filters.text,
-        timeout=60
-    )
-
-    l_msg_id, _ = parse_message_link(last.text)
-
-    if not l_msg_id:
-        return await last.reply_text("❌ Invalid last link")
+    if not f_msg_id or not l_msg_id:
+        return await message.reply("❌ Invalid links")
 
     if l_msg_id <= f_msg_id:
-        return await last.reply_text("❌ Last must be greater")
+        return await message.reply("❌ Invalid range")
 
-    # ENCODE
+    import base64
     data = f"{f_msg_id}-{l_msg_id}"
     encoded = base64.urlsafe_b64encode(data.encode()).decode().strip("=")
 
     bot = (await client.get_me()).username
     link = f"https://t.me/{bot}?start={encoded}"
 
-    await last.reply_text(
-        f"✅ Batch Generated\n\n`{link}`",
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Share", url=f"https://t.me/share/url?url={link}")]
-        ])
-    )
+    await message.reply(f"✅ Batch Link:\n\n`{link}`")
+    
 # STATS
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
