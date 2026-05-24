@@ -262,6 +262,7 @@ async def start(client, message: Message):
 # ------------------------- #
     
     # ================= BATCH LINK =================
+    # ================= BATCH LINK =================
     try:
         decoded = base64.urlsafe_b64decode(
             param + "=" * (-len(param) % 4)
@@ -269,143 +270,129 @@ async def start(client, message: Message):
 
     except Exception as e:
         print(e)
-        return await message.reply_text("‼️ Iɴᴠᴀʟɪᴅ ᴏʀ Exᴘɪʀᴇᴅ Lɪɴᴋ")
+        return await message.reply_text("‼️ Invalid or expired link")
 
-        if decoded.startswith("get-"):
+    if decoded.startswith("get-"):
 
-            _, chat_id, first_id, last_id = decoded.split("-")
+        _, chat_id, first_id, last_id = decoded.split("-")
 
-            chat_id = int(chat_id)
-            first_id = int(first_id)
-            last_id = int(last_id)
+        chat_id = int(chat_id)
+        first_id = int(first_id)
+        last_id = int(last_id)
 
-            x = await message.reply_text(
-            "🔗 ғɪʟᴇs ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ..."
-            )
+        x = await message.reply_text("🔗 ғɪʟᴇs ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ...")
 
-            await asyncio.sleep(0.5)
+        await asyncio.sleep(0.5)
+        await x.edit_text("✨️ ғɪʟᴇs ʟᴏᴀᴅɪɴɢ...")
+        await asyncio.sleep(0.5)
+        await x.edit_text("⏳️ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...")
+        await asyncio.sleep(0.5)
+        await x.delete()
+  
+        sent_msgs = []
+  
+        for msg_id in range(first_id, last_id + 1):
 
-            await x.edit_text("✨️ ғɪʟᴇs ʟᴏᴀᴅɪɴɢ...")
- 
-            await asyncio.sleep(0.5)
+            try:
 
-            await x.edit_text("⏳️ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...")
+                msg = await client.get_messages(chat_id, msg_id)
 
-            await asyncio.sleep(0.5)
+                original_caption = msg.caption if msg.caption else ""
 
-            await x.delete()
-              
-            sent_msgs = []
-
-            for msg_id in range(first_id, last_id + 1):
-
-                try:
-
-                    msg = await client.get_messages(
-                        chat_id,
-                        msg_id
-                    )
-
-                    original_caption = msg.caption if msg.caption else ""
-
-                    caption = (
-                        f"**{original_caption}**\n\n"
-                        f"**›› Cʜᴀɴɴᴇʟ :** "
-                        f"[ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
-                    )
-
-                    buttons = InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton(
-                                "ᴜᴘᴅᴀᴛᴇs",
-                                url="https://t.me/Anime_UpdatesAU"
-                            )
-                        ]]
-                    )
-
-                    if msg.video:
-
-                        sent = await message.reply_video(
-                                   msg.video.file_id,
-                                   caption=caption,
-                                   reply_markup=buttons,
-                                   supports_streaming=True,
-                                   parse_mode=ParseMode.MARKDOWN
-                        )
-                            
-                        sent_msgs.append(sent)
-
-                    elif msg.document:
-
-                        sent = await message.reply_document(
-                                   msg.document.file_id,
-                                   caption=caption,
-                                   reply_markup=buttons,
-                                   parse_mode=ParseMode.MARKDOWN
-                        )
-                            
-                        sent_msgs.append(sent)
-
-                    elif msg.audio:
-
-                        sent = await message.reply_audio(
-                                   msg.audio.file_id,
-                                   caption=caption,
-                                   reply_markup=buttons,
-                                   parse_mode=ParseMode.MARKDOWN
-                        )
-                            
-                        sent_msgs.append(sent)
-
-                    elif msg.animation:
-
-                        sent = await message.reply_animation(
-                                   msg.animation.file_id,
-                                   caption=caption,
-                                   reply_markup=buttons,
-                                   parse_mode=ParseMode.MARKDOWN
-                        ) 
-                            
-                        sent_msgs.append(sent)
-
-                    elif msg.sticker:
-
-                        sent = await message.reply_sticker(
-                                   msg.sticker.file_id
-                        )
-                            
-                        sent_msgs.append(sent)
-
-                    await asyncio.sleep(0.3)
-
-                except Exception as e:
-                        print(e)
-
-                warn = await message.reply_text(
-                    " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-                    " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
-                    " ›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs.\n\n"
-                    " ›› 𝗡𝗼𝘁𝗲: ᴜsᴇ 𝗩𝗟𝗖 𝗣𝗹𝗮𝘆𝗲𝗿 ᴏʀ 𝗠𝗫 𝗣𝗹𝗮𝘆𝗲𝗿 ғᴏʀ ʙᴇsᴛ ᴇxᴘᴇʀɪᴇɴᴄᴇ."
+                caption = (
+                    f"**{original_caption}**\n\n"
+                    f"**›› Cʜᴀɴɴᴇʟ :** "
+                    f"[ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
                 )
 
-                await asyncio.sleep(300)
+                buttons = InlineKeyboardMarkup(
+                    [[
+                        InlineKeyboardButton(
+                            "ᴜᴘᴅᴀᴛᴇs",
+                             url="https://t.me/Anime_UpdatesAU"
+                        )
+                    ]]
+                )
 
-                for msg in sent_msgs:
-                    try:
-                        await msg.delete()
-                    except:
-                        pass
+                if msg.video:
+ 
+                    sent = await message.reply_video(
+                       msg.video.file_id,
+                       caption=caption,
+                       reply_markup=buttons,
+                       supports_streaming=True,
+                       parse_mode=ParseMode.MARKDOWN
+                    )
+ 
+                    sent_msgs.append(sent)
 
-                try:
-                    await warn.delete()
-                except:
-                    pass
-                    
-                return
-                
-    except Exception as e:
-        print(e)
+                elif msg.document:
 
+                    sent = await message.reply_document(
+                       msg.document.file_id,
+                       caption=caption,
+                       reply_markup=buttons,
+                       parse_mode=ParseMode.MARKDOWN
+                    )
+
+                    sent_msgs.append(sent)
+  
+                elif msg.audio:
+
+                    sent = await message.reply_audio(
+                       msg.audio.file_id,
+                       caption=caption,
+                       reply_markup=buttons,
+                       parse_mode=ParseMode.MARKDOWN
+                    )
+
+                    sent_msgs.append(sent)
+
+                elif msg.animation:
+
+                    sent = await message.reply_animation(
+                       msg.animation.file_id,
+                       caption=caption,
+                       reply_markup=buttons,
+                       parse_mode=ParseMode.MARKDOWN
+                    )
+
+                sent_msgs.append(sent)
+
+            elif msg.sticker:
+
+                sent = await message.reply_sticker(
+                    msg.sticker.file_id
+                )
+
+                sent_msgs.append(sent)
+
+            await asyncio.sleep(0.3)
+ 
+            except Exception as e:
+                print(e)
+
+            warn = await message.reply_text(
+           " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+           " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
+           " ›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs.\n\n"
+           " ›› 𝗡𝗼𝘁𝗲: ᴜsᴇ 𝗩𝗟𝗖 𝗣𝗹𝗮𝘆𝗲𝗿 ᴏʀ 𝗠𝗫 𝗣𝗹𝗮𝘆𝗲𝗿 ғᴏʀ ʙᴇsᴛ ᴇxᴘᴇʀɪᴇɴᴄᴇ."
+           )
+
+       await asyncio.sleep(300)
+  
+       for msg in sent_msgs:
+           try:
+               await msg.delete()
+           except:
+               pass
+
+           try:
+              await warn.delete()
+           except:
+               pass
+
+          return
 # ------------------------- #
 # Don't Remove Credit 
 # Ask Doubt @AU_Bot_Discussion 
