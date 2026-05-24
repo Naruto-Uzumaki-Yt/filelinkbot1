@@ -96,7 +96,16 @@ async def batch(client, message: Message):
 
 # ================= HANDLE BATCH REPLIES =================
 
-@app.on_message(filters.private & filters.text)
+@app.on_message(filters.private & filters.text & ~filters.command([
+    "start",
+    "stats",
+    "broadcast",
+    "batch",
+    "addadmin",
+    "removeadmin",
+    "adminlist"
+]))
+
 async def handle_batch(client, message: Message):
 
     user_id = message.from_user.id
