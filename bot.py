@@ -1,3 +1,9 @@
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
@@ -17,6 +23,12 @@ from database import (
     save_file, get_file, add_user, get_all_users, total_users,
     add_admin_db, remove_admin_db, is_admin, get_all_admins
 )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 
 from keep_alive import keep_alive
 from threading import Thread
@@ -67,6 +79,11 @@ async def get_message_id(client, message: Message):
     except:
         return None, None
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 
 #batch
 
@@ -94,6 +111,11 @@ async def batch(client, message: Message):
         "Gɪᴠᴇ Mᴇ Bᴀᴛᴄʜ Fɪʀsᴛ Mᴇssᴀɢᴇ 𝗟𝗶𝗻𝗸 ғʀᴏᴍ ʏᴏᴜʀ 𝗗𝗕 𝗖𝗵𝗮𝗻𝗻𝗲𝗹"
     )
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 # ================= HANDLE BATCH REPLIES =================
 
 @app.on_message(filters.private & filters.text & ~filters.command([
@@ -169,6 +191,12 @@ async def handle_batch(client, message: Message):
 
         del BATCH_USERS[user_id]
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 # START + LINK HANDLER
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
@@ -226,13 +254,22 @@ async def start(client, message: Message):
              ),
              parse_mode=ParseMode.MARKDOWN
          )
-     
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+    
     # ================= BATCH LINK =================
     try:
-
         decoded = base64.urlsafe_b64decode(
             param + "=" * (-len(param) % 4)
-        ).decode()
+        ).decode("utf-8")
+
+    except Exception as e:
+        print(e)
+        return await message.reply_text("‼️ Iɴᴠᴀʟɪᴅ ᴏʀ Exᴘɪʀᴇᴅ Lɪɴᴋ")
 
         if decoded.startswith("get-"):
 
@@ -368,6 +405,13 @@ async def start(client, message: Message):
                 
     except Exception as e:
         print(e)
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+    
     # ================= SINGLE FILE =================
 
     file_unique_id = param
@@ -477,6 +521,12 @@ async def start(client, message: Message):
     except:
         pass
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 # ONLY OWNER + ADMIN CAN UPLOAD 
 @app.on_message(
     (filters.document | filters.video | filters.audio | filters.sticker | filters.animation) &
@@ -558,6 +608,11 @@ async def stats(client, message: Message):
         reply_markup=keyboard
     )
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 
 # BROADCAST
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
@@ -600,6 +655,12 @@ async def auto_add_user(client, message: Message):
     if message.from_user:
         await add_user(message.from_user.id)
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 # ADD ADMIN 
 @app.on_message(filters.command("addadmin") & filters.private)
 async def add_admin(client, message: Message):
@@ -632,7 +693,13 @@ async def add_admin(client, message: Message):
         )
     except Exception as e:
         print(f"Fᴀɪʟᴇᴅ Tᴏ Nᴏᴛɪғʏ Aᴅᴍɪɴ : {e}")
-        
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 # REMOVE ADMIN 
 @app.on_message(filters.command("removeadmin") & filters.private)
 async def remove_admin(client, message: Message):
@@ -651,6 +718,12 @@ async def remove_admin(client, message: Message):
     await remove_admin_db(user_id)
 
     await message.reply_text(f"✅️ ᴀᴅᴍɪɴ ɪs ʀᴇᴍᴏᴠᴇᴅ : {user_id}")
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 
 #ADMIN LIST
 @app.on_message(filters.command("adminlist") & filters.private)
@@ -678,7 +751,13 @@ async def admin_list(client, message: Message):
         )
 
     await message.reply_text(text)
-    
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 # ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
 async def about_callback(client, query):
@@ -698,6 +777,11 @@ async def about_callback(client, query):
         parse_mode=ParseMode.MARKDOWN
     )
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 
 # HOME HANDLER
 @app.on_callback_query(filters.regex("home"))
@@ -726,6 +810,12 @@ async def home_callback(client, query):
             ]
         )
     )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
 
 # REFRESH STATS 
 @app.on_callback_query(filters.regex("refresh_stats"))
@@ -759,6 +849,12 @@ async def refresh_stats(client, query):
 
     await query.answer("Sᴛᴀᴛs Uᴘᴅᴀᴛᴇᴅ 🔄")   
 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
+
 # RUN
 from threading import Thread
 
@@ -768,5 +864,8 @@ print("Bot Started Successfully...")
 
 app.run()
 
-#don't remove credits 
-#Owner @Mr_Mohammed_29 
+# ------------------------- #
+# Don't Remove Credit 
+# Ask Doubt @AU_Bot_Discussion 
+# Owner @Mr_Mohammed_29 
+# ------------------------- #
