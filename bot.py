@@ -145,7 +145,7 @@ async def handle_batch(client, message: Message):
             )
 
         # ENCODE
-        string = f"get-{f_msg_id}-{l_msg_id}"
+        string = f"get-{chat_id}-{f_msg_id}-{l_msg_id}"
 
         base64_string = base64.urlsafe_b64encode(
             string.encode()
@@ -236,8 +236,9 @@ async def start(client, message: Message):
 
         if decoded.startswith("get-"):
 
-            _, first_id, last_id = decoded.split("-")
+            _, chat_id, first_id, last_id = decoded.split("-")
 
+            chat_id = int(chat_id)
             first_id = int(first_id)
             last_id = int(last_id)
 
@@ -264,7 +265,7 @@ async def start(client, message: Message):
                 try:
 
                     msg = await client.get_messages(
-                        CHANNEL_ID,
+                        chat_id,
                         msg_id
                     )
 
