@@ -185,7 +185,7 @@ async def start(client, message: Message):
         param = message.command[1]
 
     else:
-
+        
          photo = random.choice(IMAGES)
 
          return await message.reply_photo(
@@ -216,120 +216,121 @@ async def start(client, message: Message):
              ),
              parse_mode=ParseMode.MARKDOWN
          )
-        # ================= BATCH LINK =================
-        try:
+     
+    # ================= BATCH LINK =================
+    try:
 
-            decoded = base64.urlsafe_b64decode(
-                param + "=" * (-len(param) % 4)
-            ).decode()
+        decoded = base64.urlsafe_b64decode(
+            param + "=" * (-len(param) % 4)
+        ).decode()
 
-            if decoded.startswith("get-"):
+        if decoded.startswith("get-"):
 
-                _, first_id, last_id = decoded.split("-")
+            _, first_id, last_id = decoded.split("-")
 
-                first_id = int(first_id)
-                last_id = int(last_id)
+            first_id = int(first_id)
+            last_id = int(last_id)
 
-                x = await message.reply_text(
-                    "🔗 ғɪʟᴇs ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ..."
-                )
+            x = await message.reply_text(
+            "🔗 ғɪʟᴇs ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ..."
+            )
 
-                await asyncio.sleep(0.5)
+            await asyncio.sleep(0.5)
 
-                await x.edit_text("✨️ ғɪʟᴇs ʟᴏᴀᴅɪɴɢ...")
+            await x.edit_text("✨️ ғɪʟᴇs ʟᴏᴀᴅɪɴɢ...")
+ 
+            await asyncio.sleep(0.5)
 
-                await asyncio.sleep(0.5)
+            await x.edit_text("⏳️ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...")
 
-                await x.edit_text("⏳️ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...")
+            await asyncio.sleep(0.5)
 
-                await asyncio.sleep(0.5)
+            await x.delete()
+              
+            sent_msgs = []
 
-                await x.delete()
-                
-                sent_msgs = []
+            for msg_id in range(first_id, last_id + 1):
 
-                for msg_id in range(first_id, last_id + 1):
+                try:
 
-                    try:
+                    msg = await client.get_messages(
+                        CHANNEL_ID,
+                        msg_id
+                    )
 
-                        msg = await client.get_messages(
-                            CHANNEL_ID,
-                            msg_id
+                    original_caption = msg.caption if msg.caption else ""
+
+                    caption = (
+                        f"**{original_caption}**\n\n"
+                        f"**›› Cʜᴀɴɴᴇʟ :** "
+                        f"[ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+                    )
+
+                    buttons = InlineKeyboardMarkup(
+                        [[
+                            InlineKeyboardButton(
+                                "ᴜᴘᴅᴀᴛᴇs",
+                                url="https://t.me/Anime_UpdatesAU"
+                            )
+                        ]]
+                    )
+
+                    if msg.video:
+
+                        sent = await message.reply_video(
+                                   msg.video.file_id,
+                                   caption=caption,
+                                   reply_markup=buttons,
+                                   supports_streaming=True,
+                                   parse_mode=ParseMode.MARKDOWN
                         )
+                            
+                        sent_msgs.append(sent)
 
-                        original_caption = msg.caption if msg.caption else ""
+                    elif msg.document:
 
-                        caption = (
-                            f"**{original_caption}**\n\n"
-                            f"**›› Cʜᴀɴɴᴇʟ :** "
-                            f"[ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+                        sent = await message.reply_document(
+                                   msg.document.file_id,
+                                   caption=caption,
+                                   reply_markup=buttons,
+                                   parse_mode=ParseMode.MARKDOWN
                         )
+                            
+                        sent_msgs.append(sent)
 
-                        buttons = InlineKeyboardMarkup(
-                            [[
-                                InlineKeyboardButton(
-                                    "ᴜᴘᴅᴀᴛᴇs",
-                                    url="https://t.me/Anime_UpdatesAU"
-                                )
-                            ]]
+                    elif msg.audio:
+
+                        sent = await message.reply_audio(
+                                   msg.audio.file_id,
+                                   caption=caption,
+                                   reply_markup=buttons,
+                                   parse_mode=ParseMode.MARKDOWN
                         )
-
-                        if msg.video:
-
-                            sent = await message.reply_video(
-                                msg.video.file_id,
-                                caption=caption,
-                                reply_markup=buttons,
-                                supports_streaming=True,
-                                parse_mode=ParseMode.MARKDOWN
-                            )
                             
-                            sent_msgs.append(sent)
+                        sent_msgs.append(sent)
 
-                        elif msg.document:
+                    elif msg.animation:
 
-                            sent = await message.reply_document(
-                                msg.document.file_id,
-                                caption=caption,
-                                reply_markup=buttons,
-                                parse_mode=ParseMode.MARKDOWN
-                            )
+                        sent = await message.reply_animation(
+                                   msg.animation.file_id,
+                                   caption=caption,
+                                   reply_markup=buttons,
+                                   parse_mode=ParseMode.MARKDOWN
+                        ) 
                             
-                            sent_msgs.append(sent)
+                        sent_msgs.append(sent)
 
-                        elif msg.audio:
+                    elif msg.sticker:
 
-                            sent = await message.reply_audio(
-                                msg.audio.file_id,
-                                caption=caption,
-                                reply_markup=buttons,
-                                parse_mode=ParseMode.MARKDOWN
-                            )
+                        sent = await message.reply_sticker(
+                                   msg.sticker.file_id
+                        )
                             
-                            sent_msgs.append(sent)
+                        sent_msgs.append(sent)
 
-                        elif msg.animation:
+                    await asyncio.sleep(0.3)
 
-                            sent = await message.reply_animation(
-                                msg.animation.file_id,
-                                caption=caption,
-                                reply_markup=buttons,
-                                parse_mode=ParseMode.MARKDOWN
-                            )
-                            
-                            sent_msgs.append(sent)
-
-                        elif msg.sticker:
-
-                            sent = await message.reply_sticker(
-                                msg.sticker.file_id
-                            )
-                            
-                            sent_msgs.append(sent)
-
-                        await asyncio.sleep(0.3)
-
-                    except Exception as e:
+                except Exception as e:
                         print(e)
 
                 warn = await message.reply_text(
@@ -353,9 +354,9 @@ async def start(client, message: Message):
                     pass
                     
                 return
-
-               
-
+                
+    except Exception as e:
+        print(e)
     # ================= SINGLE FILE =================
 
     file_unique_id = param
