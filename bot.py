@@ -253,29 +253,29 @@ async def start(client, message: Message):
                             parse_mode=ParseMode.MARKDOWN
                         )
 
-elif msg.audio:
+                    elif msg.audio:
 
-    await message.reply_audio(
-        msg.audio.file_id,
-        caption=caption,
-        reply_markup=buttons,
-        parse_mode=ParseMode.MARKDOWN
-    )
+                        await message.reply_audio(
+                            msg.audio.file_id,
+                            caption=caption,
+                            reply_markup=buttons,
+                            parse_mode=ParseMode.MARKDOWN
+                        )
 
-elif msg.animation:
+                    elif msg.animation:
 
-    await message.reply_animation(
-        msg.animation.file_id,
-        caption=caption,
-        reply_markup=buttons,
-        parse_mode=ParseMode.MARKDOWN
-    )
+                        await message.reply_animation(
+                            msg.animation.file_id,
+                            caption=caption,
+                            reply_markup=buttons,
+                            parse_mode=ParseMode.MARKDOWN
+                        )
 
-elif msg.sticker:
+                    elif msg.sticker:
 
-    await message.reply_sticker(
-        msg.sticker.file_id
-    )
+                        await message.reply_sticker(
+                            msg.sticker.file_id
+                        )
 
                     await asyncio.sleep(0.3)
 
