@@ -80,7 +80,7 @@ async def batch_command(client, message):
     if user_id != OWNER_ID and not await is_admin(user_id):
 
         return await message.reply_text(
-            "❌ You are not allowed to use this command"
+            "ғᴜᴄᴋ ʏᴏᴜ, ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃."
         )
 
     BATCH_USERS[user_id] = {
@@ -88,7 +88,7 @@ async def batch_command(client, message):
     }
 
     await message.reply_text(
-        "🔗 Send First Message Link"
+        "🔗 Gɪᴠᴇ Mᴇ Bᴀᴛᴄʜ Fɪʀsᴛ Mᴇssᴀɢᴇ 𝗟𝗶𝗻𝗸 ғʀᴏᴍ ʏᴏᴜʀ 𝗗𝗕 ᴄʜᴀɴɴᴇʟ"
     )
 
 
@@ -127,7 +127,7 @@ async def handle_batch(client, message):
         if not first_msg_id:
 
             return await message.reply_text(
-                "❌ Invalid First Link"
+                "‼️ Iɴᴠᴀʟɪᴅ Fɪʀsᴛ Lɪɴᴋ"
             )
 
         data["chat_id"] = chat_id
@@ -135,7 +135,7 @@ async def handle_batch(client, message):
         data["step"] = "last"
 
         return await message.reply_text(
-            "🔗 Send Last Message Link"
+            "🔗 Gɪᴠᴇ Mᴇ Bᴀᴛᴄʜ Lᴀsᴛ Mᴇssᴀɢᴇ 𝗟𝗶𝗻𝗸 ғʀᴏᴍ ʏᴏᴜʀ 𝗗𝗕 ᴄʜᴀɴɴᴇʟ"
         )
 
     # LAST LINK
@@ -149,7 +149,7 @@ async def handle_batch(client, message):
         if not last_msg_id:
 
             return await message.reply_text(
-                "❌ Invalid Last Link"
+                "‼️ Iɴᴠᴀʟɪᴅ Lᴀsᴛ Lɪɴᴋ"
             )
 
         first_msg_id = data["first_msg_id"]
@@ -157,7 +157,7 @@ async def handle_batch(client, message):
         if last_msg_id < first_msg_id:
 
             return await message.reply_text(
-                "❌ Last message must be greater than first message"
+                "‼️ Lᴀsᴛ ᴍᴇssᴀɢᴇ ᴍᴜsᴛ ʙᴇ ɢʀᴇᴀᴛᴇʀ ᴛʜᴀɴ ғɪʀsᴛ ᴍᴇssᴀɢᴇ"
             )
 
         batch_data = (
@@ -173,7 +173,7 @@ async def handle_batch(client, message):
         link = f"https://t.me/{bot_username}?start={encoded}"
 
         await message.reply_text(
-            f"✅ Batch Link Generated\n\n{link}"
+            f"✅ ʙᴀᴛᴄʜ ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ\n\n{link}"
         )
 
         del BATCH_USERS[user_id]
@@ -188,7 +188,7 @@ async def start(client, message: Message):
     # START ANIMATION
     m = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻. . .")
     await asyncio.sleep(0.5)
-    await m.edit_text("🎊")
+    await m.edit_text("🔥")
     await asyncio.sleep(0.5)
     await m.edit_text("⚡")
     await asyncio.sleep(0.5)
@@ -196,7 +196,7 @@ async def start(client, message: Message):
     await asyncio.sleep(0.5)
     await m.delete()
 
-    await message.reply_sticker("CAACAgUAAxkBAAEXmw5plIsM5lyaJfj5NwNp13QSrbW9NQACnBsAAlztqVYRMk2x1suA_B4E")
+    await message.reply_sticker("CAACAgIAAxkBAAICR2oVJiIXaZ5rq3gCNOT-ilnKHtPgAAJkOQACmcQYSGuKRcCIf8hnHgQ")
 
     if len(message.command) > 1:
         param = message.command[1]
@@ -221,19 +221,100 @@ async def start(client, message: Message):
                     "⏳ Sending Files..."
                 )
 
+                sent_messages = []
+                warn_messages = []
+
                 for msg_id in range(first_id, last_id + 1):
 
                     try:
 
                         msg = await client.get_messages(
                             chat_id,
-                            msg_id
+                             msg_id
                         )
 
                         if not msg:
                             continue
 
-                        await msg.copy(message.chat.id)
+                        original_caption = msg.caption if msg.caption else ""
+
+                        caption = (
+                            f"**{original_caption}**\n\n"
+                            f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+                        )
+
+                        buttons = InlineKeyboardMarkup(
+                            [[
+                                InlineKeyboardButton(
+                                    "ᴜᴘᴅᴀᴛᴇs",
+                                    url="https://t.me/Anime_UpdatesAU"
+                                )
+                            ]]
+                        )
+
+                        # VIDEO
+                        if msg.video:
+
+                            sent = await message.reply_video(
+                                video=msg.video.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                thumb=msg.video.thumbs[-1].file_id if msg.video.thumbs else None,
+                                supports_streaming=True,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        # AUDIO
+                        elif msg.audio:
+
+                            sent = await message.reply_audio(
+                                audio=msg.audio.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        # DOCUMENT
+                        elif msg.document:
+
+                            sent = await message.reply_document(
+                                document=msg.document.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        # STICKER
+                        elif msg.sticker:
+
+                            sent = await message.reply_sticker(
+                                sticker=msg.sticker.file_id
+                            )
+
+                        # GIF / ANIMATION
+                        elif msg.animation:
+
+                            sent = await message.reply_animation(
+                                animation=msg.animation.file_id,
+                                caption=caption,
+                               reply_markup=buttons,
+                               parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        else:
+                            continue
+
+                        sent_messages.append(sent)
+
+                        warn = await message.reply_text(
+                            " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+                            " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
+                            " ›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs.\n\n"
+                            " ›› 𝗡𝗼𝘁𝗲: ᴜsᴇ 𝗩𝗟𝗖 𝗣𝗹𝗮𝘆𝗲𝗿 ᴏʀ 𝗠𝗫 𝗣𝗹𝗮𝘆𝗲𝗿 ғᴏʀ ʙᴇsᴛ ᴇxᴘᴇʀɪᴇɴᴄᴇ.",
+                            parse_mode=ParseMode.MARKDOWN
+                        )
+
+                        warn_messages.append(warn)
 
                         await asyncio.sleep(0.3)
 
@@ -242,10 +323,21 @@ async def start(client, message: Message):
 
                 await wait.delete()
 
-                return
+                await asyncio.sleep(300)
 
-        except Exception as e:
-            print(e)
+                for x in sent_messages:
+                    try:
+                        await x.delete()
+                    except:
+                        pass
+
+                for y in warn_messages:
+                    try:
+                        await y.delete()
+                    except:
+                        pass
+
+                return
 
         
         file_unique_id = message.command[1]
