@@ -338,7 +338,8 @@ async def start(client, message: Message):
                         pass
 
                 return
-
+        except Exception as e:
+            print(e)
         
         file_unique_id = message.command[1]
         data = await get_file(file_unique_id)
