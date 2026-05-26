@@ -182,10 +182,6 @@ async def handle_batch(client, message):
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
 
-# START + LINK HANDLER
-@app.on_message(filters.command("start"))
-async def start(client, message: Message):
-
     user_id = message.from_user.id
     await add_user(message.from_user.id)
 
