@@ -220,24 +220,15 @@ async def start(client, message: Message):
                 chat_id = int(chat_id)
                 first_id = int(first_id)
                 last_id = int(last_id)
-
-                wait = await message.reply_text(
-                    "⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs..."
-                )
-
-                await asyncio.sleep(1)
                 
                 sent_messages = []
-                warn_messages = []
+
+                wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
 
                 for msg_id in range(first_id, last_id + 1):
 
                     try:
-
-                        msg = await client.get_messages(
-                            chat_id,
-                             msg_id
-                        )
+                        msg = await client.get_messages(chat_id, msg_id)
 
                         if not msg:
                             continue
@@ -250,29 +241,19 @@ async def start(client, message: Message):
                         )
 
                         buttons = InlineKeyboardMarkup(
-                            [[
-                                InlineKeyboardButton(
-                                    "ᴜᴘᴅᴀᴛᴇs",
-                                    url="https://t.me/Anime_UpdatesAU"
-                                )
-                            ]]
+                            [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
                         )
 
-                        # VIDEO
                         if msg.video:
-
                             sent = await message.reply_video(
                                 video=msg.video.file_id,
                                 caption=caption,
                                 reply_markup=buttons,
-                                thumb=msg.video.thumbs[-1].file_id if msg.video.thumbs else None,
                                 supports_streaming=True,
                                 parse_mode=ParseMode.MARKDOWN
                             )
 
-                        # AUDIO
                         elif msg.audio:
-
                             sent = await message.reply_audio(
                                 audio=msg.audio.file_id,
                                 caption=caption,
@@ -280,72 +261,57 @@ async def start(client, message: Message):
                                 parse_mode=ParseMode.MARKDOWN
                             )
 
-                        # DOCUMENT
                         elif msg.document:
-
                             sent = await message.reply_document(
                                 document=msg.document.file_id,
                                 caption=caption,
                                 reply_markup=buttons,
                                 parse_mode=ParseMode.MARKDOWN
-                            )
+                            ) 
 
-                        # STICKER
                         elif msg.sticker:
+                            sent = await message.reply_sticker(sticker=msg.sticker.file_id)
 
-                            sent = await message.reply_sticker(
-                                sticker=msg.sticker.file_id
-                            )
-
-                        # GIF / ANIMATION
                         elif msg.animation:
-
-                            sent = await message.reply_animation(
-                                animation=msg.animation.file_id,
-                                caption=caption,
+                           sent = await message.reply_animation(
+                               animation=msg.animation.file_id,
+                               caption=caption,
                                reply_markup=buttons,
                                parse_mode=ParseMode.MARKDOWN
-                            )
-
+                           )
                         else:
                             continue
 
                         sent_messages.append(sent)
 
-                        warn = await message.reply_text(
-                            " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-                            " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
-                            " ›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs.\n\n"
-                            " ›› 𝗡𝗼𝘁𝗲: ᴜsᴇ 𝗩𝗟𝗖 𝗣𝗹𝗮𝘆𝗲𝗿 ᴏʀ 𝗠𝗫 𝗣𝗹𝗮𝘆𝗲𝗿 ғᴏʀ ʙᴇsᴛ ᴇxᴘᴇʀɪᴇɴᴄᴇ.",
-                            parse_mode=ParseMode.MARKDOWN
-                        )
-
-                        warn_messages.append(warn)
-
                         await asyncio.sleep(0.3)
-
+  
                     except Exception as e:
                         print(e)
+                        
+                    await wait.delete()
 
-                await wait.delete()
+                    warn = await message.reply_text(
+                        " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+                        " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
+                        " ›› Sᴏ ᴘʟᴇᴀsᴇ sᴀᴠᴇ ᴛʜᴇᴍ.",
+                        parse_mode=ParseMode.MARKDOWN
+                    )
 
-                await asyncio.sleep(300)
+                    await asyncio.sleep(300)
 
-                for x in sent_messages:
+                    for x in sent_messages:
+                        try:
+                            await x.delete()
+                        except:
+                            pass
+
                     try:
-                        await x.delete()
+                        await warn.delete()
                     except:
                         pass
 
-                for y in warn_messages:
-                    try:
-                        await y.delete()
-                    except:
-                        pass
-
-                return
-        except Exception as e:
-            print(e)
+                    return
         
         file_unique_id = message.command[1]
         data = await get_file(file_unique_id)
