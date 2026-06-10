@@ -32,6 +32,49 @@
 ![Forks](https://img.shields.io/github/forks/Coder-yt/filelinkbot?style=social)
 ![Last Commit](https://img.shields.io/github/last-commit/Coder-yt/filelinkbot)
 
+✨ Features
+
+- 🔗 Generate secure file-sharing links instantly
+- 📁 Store videos, documents, audio files, stickers, and GIFs
+- 📦 Batch Link Generator for multiple files/messages
+- 👑 Owner & Admin Upload Access System
+- 🔐 Private File Storage Support
+- ⚡ Fast File Delivery via Telegram CDN
+- 🎬 Streaming Enabled Video Playback
+- 📝 Custom Captions Preservation
+- 👥 User Database Management
+- 📢 Broadcast Message System
+- 📊 Real-Time Bot Statistics
+- 👨‍💼 Multi-Admin Management System
+- ➕ Add Admin Command
+- ➖ Remove Admin Command
+- 📋 Admin List Command
+- 🎨 Attractive Start Message with Images & Buttons
+- 🛡 Secure File Access via Unique Links
+- 🗄 MongoDB Database Support
+- ☁️ Deployable on Render, Koyeb, VPS & More
+- 🚀 Lightweight & High-Speed Performance
+- 💯 Easy Setup & User-Friendly Interface
+
+📂 Supported Media Types
+
+- 🎥 Videos
+- 📄 Documents
+- 🎵 Audio Files
+- 🖼 GIF / Animations
+- 😄 Stickers
+
+🌟 Advanced Features
+
+- 📦 Batch File Sharing
+- 👑 Owner Controls
+- 🛠 Admin Controls
+- 📢 Mass Broadcast System
+- ⏳ Auto File Expiry
+- 🔗 Permanent Share Links
+- 🔐 Secure Private Storage
+- 🎯 Clean & Modern Interface
+
 ## ⚙️ Configuration Variables
 
 | Variable        | Description                                  | Example / Format              |
