@@ -626,88 +626,10 @@ async def stats(client, message: Message):
 
 @app.on_message(filters.command("system") & filters.private)
 async def system_info(client, message: Message):
-
     try:
         await send_system_panel(message, client)
-
     except Exception as e:
         await message.reply_text(f"Error: {e}")
-        
-# ------------------------- #
-# Don't Remove Credit 
-# Owner @Mr_Mohammed_29
-# ------------------------- #
-
-@app.on_message(filters.command("system") & filters.private)
-async def system_info(client, message: Message):
-
-    try:
-        # BOT UPTIME
-        bot_uptime = int(time.time() - START_TIME)
-        b_d, rem = divmod(bot_uptime, 86400)
-        b_h, rem = divmod(rem, 3600)
-        b_m, b_s = divmod(rem, 60)
-
-        # SYSTEM UPTIME
-        boot_time = psutil.boot_time()
-        sys_uptime = int(time.time() - boot_time)
-        s_d, rem = divmod(sys_uptime, 86400)
-        s_h, rem = divmod(rem, 3600)
-        s_m, s_s = divmod(rem, 60)
-
-        # RAM
-        mem = psutil.virtual_memory()
-        ram_used = mem.used / (1024 ** 3)
-        ram_total = mem.total / (1024 ** 3)
-
-        # DISK
-        disk = psutil.disk_usage("/")
-        disk_used = disk.used / (1024 ** 3)
-        disk_total = disk.total / (1024 ** 3)
-
-        # CPU
-        cpu_usage = psutil.cpu_percent(interval=0.3)
-
-        # REAL latency (Telegram-style approximation)
-        start = time.time()
-        await asyncio.sleep(0.05)
-        latency = round((time.time() - start) * 1000, 3)
-
-        text = (
-            "💻 **Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
-            "🖥️ **OS Dᴇᴛᴀɪʟs**\n"
-            f"➤ {platform.system()} {platform.release()}\n\n"
-            "⚙️ **Cᴘᴜ Usᴀɢᴇ**\n"
-            f"➤ {cpu_usage}%\n\n"
-            "⏰ **Bᴏᴛ Uᴘᴛɪᴍᴇ**\n"
-            f"➤ {b_d}d : {b_h}h : {b_m}m : {b_s}s\n\n"
-            "🔄 **Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ (Sᴇʀᴠᴇʀ)**\n"
-            f"➤ {s_d}d : {s_h}h : {s_m}m\n\n"
-            "💾 **Rᴀᴍ Usᴀɢᴇ**\n"
-            f"➤ {ram_used:.2f} GB / {ram_total:.2f} GB\n\n"
-            "📁 **Dɪsᴋ Usᴀɢᴇ**\n"
-            f"➤ {disk_used:.2f} GB / {disk_total:.2f} GB\n\n"
-            "📶 **Lᴀᴛᴇɴᴄʏ**\n"
-            f"➤ {latency} ms"
-        )
-
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_system"),
-                    InlineKeyboardButton("🏠 Hᴏᴍᴇ", callback_data="home")
-                ]
-            ]
-        )
-
-        await message.reply_photo(
-            photo=random.choice(IMAGES),
-            caption=text,
-            reply_markup=keyboard
-        )
-
-    except Exception as e:
-        await message.reply_text(f"❌ System Error: {e}")
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -1009,11 +931,6 @@ async def refresh_stats(client, query):
 async def refresh_system(client, query):
 
     try:
-        # reuse same function
-        class FakeMsg:
-            def __init__(self, message):
-                self.reply_photo = message.reply_photo
-
         await send_system_panel(query.message, client)
 
         await query.answer("Updated ✔")
