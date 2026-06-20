@@ -20,6 +20,12 @@ import sys
 import platform
 import random
 import psutil
+import time
+import asyncio 
+import traceback
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -42,8 +48,6 @@ from database import (
 # ------------------------- #
 
 from keep_alive import keep_alive
-import asyncio
-import time
 
 START_TIME = time.time()
 BOT_VERSION = "v3.0"
@@ -806,20 +810,10 @@ async def get_id(client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "📋 ᴄᴏᴘʏ ɪᴅ",
-                        url=f"https://t.me/share/url?url={user_id}"
-                    ),
-                    InlineKeyboardButton(
-                        "⧉ ᴄᴏᴘʏ ᴜsᴇʀɴᴀᴍᴇ",
-                        url=f"https://t.me/share/url?url={username}"
-                    )
+                    InlineKeyboardButton("📋 Copy ID", url=f"https://t.me/share/url?url={user_id}")
                 ],
                 [
-                    InlineKeyboardButton(
-                        "⎘ ᴄᴏᴘʏ ғᴜʟʟ ɪɴғᴏ",
-                        url=f"https://t.me/share/url?url={text}"
-                    )
+                    InlineKeyboardButton("⧉ Copy Username", url=f"https://t.me/share/url?url={username}")
                 ]
             ]
         )
@@ -834,16 +828,15 @@ async def alive(client, message: Message):
 
     try:
         await message.reply_sticker(
-            sticker="CAACAgUAAxkBAAIPvWo2rZbuFp73D4Z-lQ_c7lArJ7wPAAL5HQACSBxgVe2VLHdaKkQ1PAQ"
+            "CAACAgUAAxkBAAIPvWo2rZbuFp73D4Z-lQ_c7lArJ7wPAAL5HQACSBxgVe2VLHdaKkQ1PAQ"
         )
 
         await message.reply_text(
-            "Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\n"
-            "Pʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!"
+            "Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\nPʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!"
         )
 
     except Exception as e:
-        await message.reply_text(f"❌ Error: {e}")
+        await message.reply_text(f"Alive error: {e}")
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -969,10 +962,9 @@ async def refresh_system(client, query):
 
         cpu_usage = psutil.cpu_percent(interval=0.2)
 
-        # FIXED latency (your old one was wrong)
         start = time.time()
-        await asyncio.sleep(0.03)
         latency = round((time.time() - start) * 1000, 3)
+        cpu_usage = psutil.cpu_percent(interval=0.3)
 
         text = (
             "💻 **Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
@@ -1017,9 +1009,27 @@ async def refresh_system(client, query):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
-#RUN
-keep_alive()
-app.run()
+@app.on_message(filters.all)
+async def debug_errors(client, message):
+    try:
+        pass
+    except Exception:
+        print(traceback.format_exc())
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+if __name__ == "__main__":
+    keep_alive()
+    print("""
+╔══════════════════════════════╗
+║   ᴍᴏʜᴀᴍᴍᴇᴅᴅᴇᴠ-ʏᴛ                   ║
+║   ғɪʟᴇ sᴛᴏʀᴇ ʙᴏᴛ sᴛᴀʀᴛᴇᴅ.            ║
+╚══════════════════════════════╝
+""")
+    app.run()
 
 # ------------------------- #
 # Don't Remove Credit 
