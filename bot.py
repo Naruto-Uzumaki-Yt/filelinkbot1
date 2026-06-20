@@ -5,14 +5,25 @@
 # ------------------------- #
 
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CopyTextButton
 from config import *
 from pyrogram.types import InputMediaPhoto
 from pyrogram.enums import ParseMode
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 import os
 import sys
 import random
 import psutil
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 IMAGES = [
     "https://graph.org/file/98245197c3a4185b49dbe-3df65fb012e4195cff.jpg",
@@ -24,12 +35,22 @@ from database import (
     add_admin_db, remove_admin_db, is_admin, get_all_admins
 )
 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 from keep_alive import keep_alive
 import asyncio
 import time
 
 START_TIME = time.time()
 BOT_VERSION = "v3.0"
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 app = Client(
     "filelinkbot",
@@ -38,8 +59,18 @@ app = Client(
     bot_token=BOT_TOKEN
 ) 
 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 import base64
 import re
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 BATCH_USERS = {}
 
@@ -75,6 +106,10 @@ async def get_message_id(client, link):
     except:
         return None, None
 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # ================= BATCH COMMAND =================
 
@@ -97,6 +132,10 @@ async def batch_command(client, message):
         "🔗 Gɪᴠᴇ Mᴇ Bᴀᴛᴄʜ Fɪʀsᴛ Mᴇssᴀɢᴇ 𝗟𝗶𝗻𝗸 ғʀᴏᴍ ʏᴏᴜʀ 𝗗𝗕 ᴄʜᴀɴɴᴇʟ"
     )
 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # ================= HANDLE BATCH =================
 
@@ -113,6 +152,12 @@ async def batch_command(client, message):
         "adminlist"
     ])
 )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 async def handle_batch(client, message):
 
     user_id = message.from_user.id
@@ -183,8 +228,13 @@ async def handle_batch(client, message):
         )
 
         del BATCH_USERS[user_id]
-
+        
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 # START + LINK HANDLER
+
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
 
@@ -420,6 +470,11 @@ async def start(client, message: Message):
         ),
         parse_mode=ParseMode.MARKDOWN
     )
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # ONLY OWNER + ADMIN CAN UPLOAD 
 @app.on_message(
@@ -471,7 +526,11 @@ async def save_media(client, message: Message):
     link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
 
     await message.reply_text(f"🔗 𝗛𝗲𝗿𝗲 𝗜𝘀 𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸:\n{link}")
-
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 # STATS
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
@@ -501,6 +560,12 @@ async def stats(client, message: Message):
         f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}",
         reply_markup=keyboard
     )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 # BROADCAST
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
@@ -532,7 +597,11 @@ async def broadcast(client, message: Message):
         f"◇ Sᴜᴄᴄᴇssғᴜʟ: {sent}\n"
         f"◇ Uɴsᴜᴄᴄᴇssғᴜʟ: {failed}"
     )
-
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 @app.on_message(
     filters.private &
     ~filters.service &
@@ -541,6 +610,11 @@ async def broadcast(client, message: Message):
 async def auto_add_user(client, message: Message):
     if message.from_user:
         await add_user(message.from_user.id)
+        
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # ADD ADMIN 
 @app.on_message(filters.command("addadmin") & filters.private)
@@ -574,6 +648,11 @@ async def add_admin(client, message: Message):
         )
     except Exception as e:
         print(f"Fᴀɪʟᴇᴅ Tᴏ Nᴏᴛɪғʏ Aᴅᴍɪɴ : {e}")
+        
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # REMOVE ADMIN 
 @app.on_message(filters.command("removeadmin") & filters.private)
@@ -593,6 +672,11 @@ async def remove_admin(client, message: Message):
     await remove_admin_db(user_id)
 
     await message.reply_text(f"✅️ ᴀᴅᴍɪɴ ɪs ʀᴇᴍᴏᴠᴇᴅ : {user_id}")
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 #ADMIN LIST
 @app.on_message(filters.command("adminlist") & filters.private)
@@ -620,6 +704,53 @@ async def admin_list(client, message: Message):
         )
 
     await message.reply_text(text)
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+@app.on_message(filters.command("id") & filters.private)
+async def get_id(client, message: Message):
+    user = message.from_user
+
+    user_id = str(user.id)
+    username = f"@{user.username}" if user.username else "No Username"
+
+    text = (
+        f"👤 ʏᴏᴜʀ ɪɴғᴏ ᴘᴀɴᴇʟ\n\n"
+        f"🆔 ɪᴅ - {user_id}\n"
+        f"👤 ᴜsᴇʀɴᴀᴍᴇ - {username}"
+    )
+
+    await message.reply_text(
+        text,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "📋 ᴄᴏᴘʏ ɪᴅ",
+                        copy_text=CopyTextButton(text=user_id)
+                    ),
+                    InlineKeyboardButton(
+                        "⧉ ᴄᴏᴘʏ ᴜsᴇʀɴᴀᴍᴇ",
+                        copy_text=CopyTextButton(text=username)
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        "⎘ ᴄᴏᴘʏ ғᴜʟʟ ɪɴғᴏ",
+                        copy_text=CopyTextButton(text=text)
+                    )
+                ]
+            ]
+        )
+    )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
@@ -631,15 +762,19 @@ async def about_callback(client, query):
         "‣ ʟɪʙʀᴀʀʏ : [ᴘʏʀᴏɢʀᴀᴍ 𝟸.𝟶](https://pypi.org/project/Pyrogram/)\n"
         "‣ ʟᴀɴɢᴜᴀɢᴇ : [ᴘʏᴛʜᴏɴ 𝟹](https://www.python.org/downloads/)\n"
         "‣ ᴅᴀᴛᴀ ʙᴀsᴇ : [ᴍᴏɴɢᴏ ᴅʙ](https://www.mongodb.com/)\n"
-        "‣ ʙᴏᴛ sᴇʀᴠᴇʀ : [Bᴏᴛs Sᴇʀᴠᴇʀ](https://t.me/BotsServerDead)\n"
+        "‣ ʙᴏᴛ sᴇʀᴠᴇʀ : [Bᴏᴛs Sᴇʀᴠᴇʀ](https://render.com)\n"
         "‣ ᴜᴘᴅᴀᴛᴇs : [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)\n"
-        "‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : ᴠ3.𝟶 [sᴛᴀʙʟᴇ](https://t.me/BotsServerDead)",
+        "‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : ᴠ3.𝟶 [sᴛᴀʙʟᴇ](https://t.me/Anime_UpdatesAU)",
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("ʜᴏᴍᴇ", callback_data="home")]]
         ),
         parse_mode=ParseMode.MARKDOWN
     )
 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # HOME HANDLER
 @app.on_callback_query(filters.regex("home"))
@@ -668,6 +803,11 @@ async def home_callback(client, query):
             ]
         )
     )
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
 
 # REFRESH STATS 
 @app.on_callback_query(filters.regex("refresh_stats"))
@@ -701,9 +841,16 @@ async def refresh_stats(client, query):
 
     await query.answer("Sᴛᴀᴛs Uᴘᴅᴀᴛᴇᴅ 🔄")   
 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 #RUN
 keep_alive()
 app.run()
 
-#don't remove credits 
-#Owner @Mr_Mohammed_29 
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
