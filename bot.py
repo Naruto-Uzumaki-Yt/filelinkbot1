@@ -195,10 +195,7 @@ async def batch_command(client, message):
         "broadcast",
         "addadmin",
         "removeadmin",
-        "adminlist",
-        "system",
-        "alive",
-        "id"
+        "adminlist"
     ])
 )
 
