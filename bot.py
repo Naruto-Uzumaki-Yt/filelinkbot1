@@ -5,7 +5,7 @@
 # ------------------------- #
 
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CopyTextButton
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from pyrogram.types import InputMediaPhoto
 from pyrogram.enums import ParseMode
@@ -782,6 +782,7 @@ async def admin_list(client, message: Message):
 
 @app.on_message(filters.command("id") & filters.private)
 async def get_id(client, message: Message):
+
     user = message.from_user
 
     user_id = str(user.id)
@@ -800,23 +801,22 @@ async def get_id(client, message: Message):
                 [
                     InlineKeyboardButton(
                         "📋 ᴄᴏᴘʏ ɪᴅ",
-                        copy_text=CopyTextButton(text=user_id)
+                        url=f"https://t.me/share/url?url={user_id}"
                     ),
                     InlineKeyboardButton(
                         "⧉ ᴄᴏᴘʏ ᴜsᴇʀɴᴀᴍᴇ",
-                        copy_text=CopyTextButton(text=username)
+                        url=f"https://t.me/share/url?url={username}"
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         "⎘ ᴄᴏᴘʏ ғᴜʟʟ ɪɴғᴏ",
-                        copy_text=CopyTextButton(text=text)
+                        url=f"https://t.me/share/url?url={text}"
                     )
                 ]
             ]
         )
     )
-
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
