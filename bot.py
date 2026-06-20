@@ -64,6 +64,59 @@ app = Client(
     bot_token=BOT_TOKEN
 ) 
 
+async def send_system_panel(message, client):
+
+    bot_uptime = int(time.time() - START_TIME)
+    b_d, rem = divmod(bot_uptime, 86400)
+    b_h, rem = divmod(rem, 3600)
+    b_m, b_s = divmod(rem, 60)
+
+    boot_time = psutil.boot_time()
+    sys_uptime = int(time.time() - boot_time)
+    s_d, rem = divmod(sys_uptime, 86400)
+    s_h, rem = divmod(rem, 3600)
+    s_m, s_s = divmod(rem, 60)
+
+    mem = psutil.virtual_memory()
+    ram_used = mem.used / (1024 ** 3)
+    ram_total = mem.total / (1024 ** 3)
+
+    disk = psutil.disk_usage("/")
+    disk_used = disk.used / (1024 ** 3)
+    disk_total = disk.total / (1024 ** 3)
+
+    cpu = psutil.cpu_percent(interval=0.3)
+
+    start = time.time()
+    await asyncio.sleep(0.05)
+    latency = round((time.time() - start) * 1000, 2)
+
+    text = (
+        "💻 SYSTEM PANEL\n\n"
+        f"CPU: {cpu}%\n"
+        f"RAM: {ram_used:.2f}/{ram_total:.2f} GB\n"
+        f"DISK: {disk_used:.2f}/{disk_total:.2f} GB\n\n"
+        f"BOT UPTIME: {b_d}d {b_h}h {b_m}m\n"
+        f"SERVER UPTIME: {s_d}d {s_h}h {s_m}m\n"
+        f"LATENCY: {latency} ms"
+    )
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("🔄 Refresh", callback_data="refresh_system")
+            ]
+        ]
+    )
+
+    photo = random.choice(IMAGES)
+
+    await message.reply_photo(
+        photo=photo,
+        caption=text,
+        reply_markup=keyboard
+    )
+
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
@@ -575,6 +628,20 @@ async def stats(client, message: Message):
 async def system_info(client, message: Message):
 
     try:
+        await send_system_panel(message, client)
+
+    except Exception as e:
+        await message.reply_text(f"Error: {e}")
+        
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+@app.on_message(filters.command("system") & filters.private)
+async def system_info(client, message: Message):
+
+    try:
         # BOT UPTIME
         bot_uptime = int(time.time() - START_TIME)
         b_d, rem = divmod(bot_uptime, 86400)
@@ -796,13 +863,10 @@ async def get_id(client, message: Message):
 
     user = message.from_user
 
-    user_id = str(user.id)
-    username = f"@{user.username}" if user.username else "No Username"
-
     text = (
-        f"👤 ʏᴏᴜʀ ɪɴғᴏ ᴘᴀɴᴇʟ\n\n"
-        f"🆔 ɪᴅ - {user_id}\n"
-        f"👤 ᴜsᴇʀɴᴀᴍᴇ - {username}"
+        f"👤 Your Info\n\n"
+        f"🆔 ID: {user.id}\n"
+        f"👤 Username: @{user.username if user.username else 'No Username'}"
     )
 
     await message.reply_text(
@@ -810,10 +874,7 @@ async def get_id(client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("📋 Copy ID", url=f"https://t.me/share/url?url={user_id}")
-                ],
-                [
-                    InlineKeyboardButton("⧉ Copy Username", url=f"https://t.me/share/url?url={username}")
+                    InlineKeyboardButton("📋 Copy ID", callback_data="copy_id"),
                 ]
             ]
         )
@@ -825,18 +886,16 @@ async def get_id(client, message: Message):
 
 @app.on_message(filters.command("alive") & filters.private)
 async def alive(client, message: Message):
-
     try:
         await message.reply_sticker(
             "CAACAgUAAxkBAAIPvWo2rZbuFp73D4Z-lQ_c7lArJ7wPAAL5HQACSBxgVe2VLHdaKkQ1PAQ"
         )
+    except:
+        pass
 
-        await message.reply_text(
-            "Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\nPʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!"
-        )
-
-    except Exception as e:
-        await message.reply_text(f"Alive error: {e}")
+    await message.reply_text(
+        "❤️ I am Alive!\n\nUse /start to continue."
+    )
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -894,6 +953,15 @@ async def home_callback(client, query):
             ]
         )
     )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+@app.on_callback_query(filters.regex("copy_id"))
+async def copy_id(_, query):
+    await query.answer(str(query.from_user.id), show_alert=True)
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -941,65 +1009,14 @@ async def refresh_stats(client, query):
 async def refresh_system(client, query):
 
     try:
-        bot_uptime = int(time.time() - START_TIME)
-        b_d, rem = divmod(bot_uptime, 86400)
-        b_h, rem = divmod(rem, 3600)
-        b_m, b_s = divmod(rem, 60)
+        # reuse same function
+        class FakeMsg:
+            def __init__(self, message):
+                self.reply_photo = message.reply_photo
 
-        boot_time = psutil.boot_time()
-        sys_uptime = int(time.time() - boot_time)
-        s_d, rem = divmod(sys_uptime, 86400)
-        s_h, rem = divmod(rem, 3600)
-        s_m, s_s = divmod(rem, 60)
+        await send_system_panel(query.message, client)
 
-        mem = psutil.virtual_memory()
-        ram_used = mem.used / (1024 ** 3)
-        ram_total = mem.total / (1024 ** 3)
-
-        disk = psutil.disk_usage("/")
-        disk_used = disk.used / (1024 ** 3)
-        disk_total = disk.total / (1024 ** 3)
-
-        cpu_usage = psutil.cpu_percent(interval=0.2)
-
-        start = time.time()
-        latency = round((time.time() - start) * 1000, 3)
-        cpu_usage = psutil.cpu_percent(interval=0.3)
-
-        text = (
-            "💻 **Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
-            "🖥️ **OS Dᴇᴛᴀɪʟs**\n"
-            f"➤ {platform.system()} {platform.release()}\n\n"
-            "⚙️ **Cᴘᴜ Usᴀɢᴇ**\n"
-            f"➤ {cpu_usage}%\n\n"
-            "⏰ **Bᴏᴛ Uᴘᴛɪᴍᴇ**\n"
-            f"➤ {b_d}d : {b_h}h : {b_m}m : {b_s}s\n\n"
-            "🔄 **Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ (Sᴇʀᴠᴇʀ)**\n"
-            f"➤ {s_d}d : {s_h}h : {s_m}m\n\n"
-            "💾 **Rᴀᴍ Usᴀɢᴇ**\n"
-            f"➤ {ram_used:.2f} GB / {ram_total:.2f} GB\n\n"
-            "📁 **Dɪsᴋ Usᴀɢᴇ**\n"
-            f"➤ {disk_used:.2f} GB / {disk_total:.2f} GB\n\n"
-            "📶 **Lᴀᴛᴇɴᴄʏ**\n"
-            f"➤ {latency} ms"
-        )
-
-        keyboard = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_system")]]
-        )
-
-        try:
-            await query.message.edit_caption(
-                caption=text,
-                reply_markup=keyboard
-            )
-        except:
-            await query.message.edit_text(
-                text,
-                reply_markup=keyboard
-            )
-
-        await query.answer("🖥 Sʏsᴛᴇᴍ Uᴘᴅᴀᴛᴇᴅ")
+        await query.answer("Updated ✔")
 
     except Exception as e:
         await query.answer(f"Error: {e}", show_alert=True)
