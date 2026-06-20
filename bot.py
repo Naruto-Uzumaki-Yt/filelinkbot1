@@ -752,6 +752,23 @@ async def get_id(client, message: Message):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
+@app.on_message(filters.command("alive") & filters.private)
+async def alive(client, message: Message):
+
+    await message.reply_sticker(
+        sticker="CAACAgUAAxkBAAIPvWo2rZbuFp73D4Z-lQ_c7lArJ7wPAAL5HQACSBxgVe2VLHdaKkQ1PAQ"
+    )
+
+    await message.reply_text(
+        "Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\n"
+        "Pʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!"
+    )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
 # ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
 async def about_callback(client, query):
