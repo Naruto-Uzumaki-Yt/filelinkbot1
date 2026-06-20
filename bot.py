@@ -64,8 +64,7 @@ app = Client(
     bot_token=BOT_TOKEN
 ) 
 
-async def send_system_panel(message, client):
-
+def build_system_panel():
     bot_uptime = int(time.time() - START_TIME)
     b_d, rem = divmod(bot_uptime, 86400)
     b_h, rem = divmod(rem, 3600)
@@ -88,7 +87,6 @@ async def send_system_panel(message, client):
     cpu = psutil.cpu_percent(interval=0.3)
 
     start = time.time()
-    await asyncio.sleep(0.05)
     latency = round((time.time() - start) * 1000, 2)
 
     text = (
@@ -101,21 +99,11 @@ async def send_system_panel(message, client):
         f"LATENCY: {latency} ms"
     )
 
-    keyboard = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("🔄 Refresh", callback_data="refresh_system")
-            ]
-        ]
-    )
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🔄 Refresh", callback_data="refresh_system")]
+    ])
 
-    photo = random.choice(IMAGES)
-
-    await message.reply_photo(
-        photo=photo,
-        caption=text,
-        reply_markup=keyboard
-    )
+    return text, keyboard
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -626,10 +614,14 @@ async def stats(client, message: Message):
 
 @app.on_message(filters.command("system") & filters.private)
 async def system_info(client, message: Message):
-    try:
-        await send_system_panel(message, client)
-    except Exception as e:
-        await message.reply_text(f"Error: {e}")
+    text, keyboard = build_system_panel()
+    photo = random.choice(IMAGES)
+
+    await message.reply_photo(
+        photo=photo,
+        caption=text,
+        reply_markup=keyboard
+    )
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -929,14 +921,14 @@ async def refresh_stats(client, query):
 
 @app.on_callback_query(filters.regex("refresh_system"))
 async def refresh_system(client, query):
+    text, keyboard = build_system_panel()
 
-    try:
-        await send_system_panel(query.message, client)
+    await query.message.edit_caption(
+        caption=text,
+        reply_markup=keyboard
+    )
 
-        await query.answer("Updated ✔")
-
-    except Exception as e:
-        await query.answer(f"Error: {e}", show_alert=True)
+    await query.answer("Updated ✔")
     
 # ------------------------- #
 # Don't Remove Credit 
