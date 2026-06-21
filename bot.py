@@ -9,6 +9,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from pyrogram.types import InputMediaPhoto
 from pyrogram.enums import ParseMode
+from pyrogram.errors import FloodWait
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -91,20 +92,20 @@ async def build_system_panel():
     latency = round((time.time() - start) * 1000, 2)
 
     text = (
-        "💻 SYSTEM PANEL\n\n"
-        f"CPU: {cpu}%\n"
-        f"RAM: {ram_used:.2f}/{ram_total:.2f} GB\n"
-        f"DISK: {disk_used:.2f}/{disk_total:.2f} GB\n\n"
-        f"BOT UPTIME: {b_d}d {b_h}h {b_m}m\n"
-        f"SERVER UPTIME: {s_d}d {s_h}h {s_m}m\n"
-        f"LATENCY: {latency} ms"
+        "**💻 Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
+        f"**Cᴘᴜ Usᴀɢᴇ**: {cpu}%\n"
+        f"**Rᴀᴍ Usᴀɢᴇ**: {ram_used:.2f}/{ram_total:.2f} GB\n"
+        f"**Dɪsᴋ Usᴀɢᴇ**: {disk_used:.2f}/{disk_total:.2f} GB\n\n"
+        f"**Bᴏᴛ Uᴘᴛɪᴍᴇ**: {b_d}d {b_h}h {b_m}m\n"
+        f"**Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ**: {s_d}d {s_h}h {s_m}m\n"
+        f"**Lᴀᴛᴇɴᴄʏ**: {latency} ms"
     )
 
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔄 Refresh", callback_data="refresh_system")]
+        [InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_system")]
     ])
 
-    return text, keyboard
+    text, keyboard = await build_system_panel()
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -320,14 +321,14 @@ async def start(client, message: Message):
                 try:
                     msg = await client.get_messages(chat_id, msg_id)
 
-                    if not msg:
+                    if not msg or not msg.media:
                         continue
 
                     original_caption = msg.caption or ""
 
                     caption = (
                         f"**{original_caption}**\n\n"
-                        f"**›› Cʜᴀɴɴᴇʟ :** [Anime Updates](https://t.me/Anime_UpdatesAU)"
+                        f"**›› Cʜᴀɴɴᴇʟ :** [Anime Updates AU](https://t.me/Anime_UpdatesAU)"
                     )
 
                     buttons = InlineKeyboardMarkup(
@@ -358,14 +359,16 @@ async def start(client, message: Message):
                     await asyncio.sleep(0.3)
 
                 except Exception as e:
-                     print(f"Batch send error: {e}")
+                     print(f"Bᴀᴛᴄʜ Sᴇɴᴅ Eʀʀᴏʀ: {e}")
 
             await wait.delete()
 
             # ⏳ AUTO DELETE (ONLY IF MESSAGE SENT)
             warn = await message.reply_text(
                 "⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-                "›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ 5 ᴍɪɴᴜᴛᴇs."
+                "›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ 5 ᴍɪɴᴜᴛᴇs.\n
+                "›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ ᴀɴʏ ᴏᴛʜᴇʀ ᴘʟᴀᴄᴇ ғᴏʀ ғᴜᴛᴜʀᴇ ᴀᴠᴀɪʟᴀʙɪʟɪᴛʏ.\n
+                "›› ɴᴏᴛᴇ : ᴜsᴇ 𝗩𝗟𝗖 ᴘʟᴀʏᴇʀ ᴏʀ 𝗠𝗫 ᴘʟᴀʏᴇʀ  ᴛᴏ ᴡᴀᴛᴄʜ ᴛʜᴇ ᴇᴘɪsᴏᴅᴇs ᴡɪᴛʜ ɢᴏᴏᴅ ᴇxᴘᴇʀɪᴇɴᴄᴇ !.
             )
 
             await asyncio.sleep(300)
@@ -385,8 +388,9 @@ async def start(client, message: Message):
 
 
         except Exception as e:
-            print(f"Batch system error: {e}")
-
+            print(f"Bᴀᴛᴄʜ Sʏsᴛᴇᴍ Eʀʀᴏʀ: {e}")
+            return await message.reply_text("❌ 𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗟𝗶𝗻𝗸 𝗼𝗿 𝗖𝗼𝗿𝗿𝘂𝗽𝘁𝗲𝗱 𝗟𝗶𝗻𝗸.")
+            
             # fallback → single file mode
             file_unique_id = message.command[1]
             data = await get_file(file_unique_id)
@@ -398,7 +402,7 @@ async def start(client, message: Message):
 
             caption = (
                 f"**{original_caption}**\n\n"
-                f"**›› Cʜᴀɴɴᴇʟ :** [Anime Updates](https://t.me/Anime_UpdatesAU)"
+                f"**›› Cʜᴀɴɴᴇʟ :** [Anime Updates AU](https://t.me/Anime_UpdatesAU)"
             )
 
             buttons = InlineKeyboardMarkup(
@@ -546,14 +550,17 @@ async def stats(client, message: Message):
 
 @app.on_message(filters.command("system") & filters.private)
 async def system_info(client, message: Message):
-    text, keyboard = build_system_panel()
-    photo = random.choice(IMAGES)
+    try:
+        text, keyboard = await build_system_panel()
+        photo = random.choice(IMAGES)
 
-    await message.reply_photo(
-        photo=photo,
-        caption=text,
-        reply_markup=keyboard
-    )
+        await message.reply_photo(
+            photo=photo,
+            caption=text,
+            reply_markup=keyboard
+        )
+    except Exception as e:
+        await message.reply_text(f"Sʏsᴛᴇᴍ Eʀʀᴏʀ: {e}")
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -680,14 +687,14 @@ async def remove_admin(client, message: Message):
 async def admin_list(client, message: Message):
 
     if message.from_user.id != OWNER_ID:
-        return await message.reply_text("🚫 Only owner can use this")
+        return await message.reply_text("🚫 𝗬𝗼𝘂 𝗔𝗿𝗲 𝗡𝗼𝘁 𝗔𝘂𝘁𝗵𝗼𝗿𝗶𝘇𝗲𝗱 𝗧𝗼 𝗨𝘀𝗲 𝗧𝗵𝗶𝘀 𝗖𝗼𝗺𝗺𝗮𝗻𝗱")
 
     admins = await get_all_admins()
 
     if not admins:
-        return await message.reply_text("❌ No admins found")
+        return await message.reply_text("‼️ Nᴏ Aᴅᴍɪɴs Fᴏᴜɴᴅ Iɴ Lɪsᴛ")
 
-    text = "👑 Admin List\n\n"
+    text = "👑 Aᴅᴍɪɴ Lɪsᴛ\n\n"
 
     for i, admin in enumerate(admins, start=1):
         name = admin.get("name", "Unknown")
@@ -695,9 +702,9 @@ async def admin_list(client, message: Message):
         user_id = admin.get("user_id")
 
         text += (
-            f"{i}. Name: {name}\n"
-            f"   Username: @{username if username != 'None' else 'no_username'}\n"
-            f"   ID: {user_id}\n\n"
+            f"{i}. 𝗡𝗮𝗺𝗲: {name}\n"
+            f"   𝗨𝘀𝗲𝗿𝗻𝗮𝗺𝗲: @{username if username != 'None' else 'no_username'}\n"
+            f"   𝗜𝗗: {user_id}\n\n"
         )
 
     await message.reply_text(text)
@@ -713,9 +720,9 @@ async def get_id(client, message: Message):
     user = message.from_user
 
     text = (
-        f"👤 Your Info\n\n"
+        f"👤 Yᴏᴜʀ Iɴғᴏ\n\n"
         f"🆔 ID: {user.id}\n"
-        f"👤 Username: @{user.username if user.username else 'No Username'}"
+        f"👤 Usᴇʀɴᴀᴍᴇ: @{user.username if user.username else 'No Username'}"
     )
 
     await message.reply_text(
@@ -723,7 +730,7 @@ async def get_id(client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("📋 Copy ID", callback_data="copy_id"),
+                    InlineKeyboardButton("⧉ ᴄᴏᴘʏ ɪᴅ", callback_data="copy_id"),
                 ]
             ]
         )
@@ -743,7 +750,7 @@ async def alive(client, message: Message):
         pass
 
     await message.reply_text(
-        "❤️ I am Alive!\n\nUse /start to continue."
+        "❤️ 𝗬𝗼𝘂 𝗔𝗿𝗲 𝗟𝘂𝗰𝗸𝘆 𝗜 𝗮𝗺 𝗔𝗹𝗶𝘃𝗲\n\n𝗨𝘀𝗲 /start 𝗧𝗼 𝗖𝗼𝗻𝘁𝗶𝗻𝘂𝗲."
     )
 
 # ------------------------- #
@@ -810,7 +817,7 @@ async def home_callback(client, query):
 
 @app.on_callback_query(filters.regex("copy_id"))
 async def copy_id(_, query):
-    await query.answer(str(query.from_user.id), show_alert=True)
+    await query.answer(f"Yᴏᴜʀ ID: {query.from_user.id}", show_alert=True)
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -856,27 +863,15 @@ async def refresh_stats(client, query):
 
 @app.on_callback_query(filters.regex("refresh_system"))
 async def refresh_system(client, query):
-    text, keyboard = build_system_panel()
+    text, keyboard = await build_system_panel()
 
     await query.message.edit_caption(
         caption=text,
         reply_markup=keyboard
     )
 
-    await query.answer("Updated ✔")
+    await query.answer("Sʏsᴛᴇᴍ Uᴘᴅᴀᴛᴇᴅ ✔")
     
-# ------------------------- #
-# Don't Remove Credit 
-# Owner @Mr_Mohammed_29
-# ------------------------- #
-
-@app.on_message(filters.all)
-async def debug_errors(client, message):
-    try:
-        print(f"[LOG] {message.chat.id} -> {message.text}")
-    except Exception:
-        print(traceback.format_exc())
-
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
