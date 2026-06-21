@@ -191,7 +191,10 @@ async def batch_command(client, message):
         "broadcast",
         "addadmin",
         "removeadmin",
-        "adminlist"
+        "adminlist",
+        "alive",
+        "system",
+        "id"
     ])
 )
 
@@ -321,7 +324,7 @@ async def start(client, message: Message):
                 try:
                     msg = await client.get_messages(chat_id, msg_id)
 
-                    if not msg or not msg.media:
+                    if not msg:
                         continue
 
                     original_caption = msg.caption or ""
