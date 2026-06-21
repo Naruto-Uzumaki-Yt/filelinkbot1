@@ -258,6 +258,27 @@ async def start(client, message: Message):
     await asyncio.sleep(0.5)
     await m.delete()
 
+    photo = random.choice(IMAGES)
+
+    await message.reply_photo(
+        photo=photo,
+        caption=(
+            "𝗛𝗲𝗹𝗹𝗼 ♡,\n\n"
+            "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
+        ),
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU"),
+                    InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")
+                ],
+                [
+                    InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/+ssaZDrj3Wr4wNzI1")
+                ]
+            ]
+        ) 
+    )
+
     if len(message.command) > 1:
         param = message.command[1]
 
@@ -773,7 +794,7 @@ async def refresh_stats(client, query):
 async def alive(client, message):
 
     await message.reply_photo(
-        photo="https://graph.org/file/ffdbc01d09855874311b1-5f3f1eae52d984db3d.jpg",
+        photo="https://graph.org/file/af61bc94f516c210ecb37-7cdb22e66ea9539e3b.jpg",
         caption=(
             "❤️ **Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\n\n"
             "Pʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!**"
@@ -796,11 +817,11 @@ async def get_id(client, message):
 
     text = (
         "👤 **Usᴇʀ Iɴғᴏʀᴍᴀᴛɪᴏɴ**\n\n"
-        f"➲ Fɪʀsᴛ Nᴀᴍᴇ: {user.first_name or 'None'}\n"
-        f"➲ Lᴀsᴛ Nᴀᴍᴇ: {user.last_name or 'None'}\n"
-        f"➲ Usᴇʀɴᴀᴍᴇ: {user.username or 'None'}\n"
-        f"➲ Tᴇʟᴇɢʀᴀᴍ ID: {user.id}\n"
-        f"➲ Dᴀᴛᴀ Cᴇɴᴛʀᴇ: {user.dc_id or 'Unknown'}"
+        f"➲ **Fɪʀsᴛ Nᴀᴍᴇ**: {user.first_name or 'None'}\n"
+        f"➲ **Lᴀsᴛ Nᴀᴍᴇ**: {user.last_name or 'None'}\n"
+        f"➲ **Usᴇʀɴᴀᴍᴇ**: {user.username or 'None'}\n"
+        f"➲ **Tᴇʟᴇɢʀᴀᴍ ID**: {user.id}\n"
+        f"➲ **Dᴀᴛᴀ Cᴇɴᴛʀᴇ**: {user.dc_id or 'Unknown'}"
     )
 
     keyboard = InlineKeyboardMarkup(
@@ -808,7 +829,7 @@ async def get_id(client, message):
             [
                 InlineKeyboardButton(
                     "👤 Vɪᴇᴡ Pʀᴏғɪʟᴇ",
-                    url=f"tg://user?id={user.id}"
+                    url=f"https://t.me/{user.username}" if user.username else f"tg://openmessage?user_id={user.id}"
                 )
             ]
         ]
@@ -867,15 +888,17 @@ async def system_info(client, message):
 
     text = (
         "💻 **Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
-        f"🖥️ OS Dᴇᴛᴀɪʟs: {os_name}\n"
-        f"⏰ Bᴏᴛ Uᴘᴛɪᴍᴇ: {d}ᴅ : {h}ʜ : {m}ᴍ : {s}s\n"
-        f"🔄 Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ: {sd}ᴅ : {sh}ʜ : {sm}ᴍ : {ss}s\n"
-        f"💾 Rᴀᴍ Usᴀɢᴇ: {ram.used/(1024**3):.2f} GB / {ram.total/(1024**3):.2f} GB\n"
-        f"📁 Dɪsᴋ Usᴀɢᴇ: {disk.used/(1024**3):.2f} GB / {disk.total/(1024**3):.2f} GB"
+        f"🖥️ **OS Dᴇᴛᴀɪʟs** : {os_name}\n"
+        f"⏰ **Bᴏᴛ Uᴘᴛɪᴍᴇ** : {d}ᴅ : {h}ʜ : {m}ᴍ : {s}s\n"
+        f"🔄 **Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ** : {sd}ᴅ : {sh}ʜ : {sm}ᴍ : {ss}s\n"
+        f"💾 **Rᴀᴍ Usᴀɢᴇ** : {ram.used/(1024**3):.2f} GB / {ram.total/(1024**3):.2f} GB\n"
+        f"📁 **Dɪsᴋ Usᴀɢᴇ** : {disk.used/(1024**3):.2f} GB / {disk.total/(1024**3):.2f} GB"
     )
 
-    await message.reply_text(text)
-
+    await message.reply_photo(
+        photo="YOUR_IMAGE_LINK",
+        caption=text
+    )
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
