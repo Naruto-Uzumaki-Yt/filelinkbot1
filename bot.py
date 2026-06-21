@@ -306,19 +306,19 @@ async def start(client, message: Message):
             if not decoded.startswith("batch:"):
                 raise Exception("Not batch link")
 
-             _, chat_id, first_id, last_id = decoded.split(":")
+            _, chat_id, first_id, last_id = decoded.split(":")
     
-             chat_id = int(chat_id)
-             first_id = int(first_id)
-             last_id = int(last_id)
+            chat_id = int(chat_id)
+            first_id = int(first_id)
+            last_id = int(last_id)
 
-             sent_messages = []
+            sent_messages = []
 
-             wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
+            wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
 
-             for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
-                 try:
-                     msg = await client.get_messages(chat_id, msg_id)
+            for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
+                try:
+                    msg = await client.get_messages(chat_id, msg_id)
 
                     if not msg:
                         continue
@@ -357,31 +357,31 @@ async def start(client, message: Message):
                     sent_messages.append(sent)
                     await asyncio.sleep(0.3)
 
-                 except Exception as e:
+                except Exception as e:
                      print(f"Batch send error: {e}")
 
-             await wait.delete()
+            await wait.delete()
 
-             # ⏳ AUTO DELETE (ONLY IF MESSAGE SENT)
-             warn = await message.reply_text(
-                 "⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-                 "›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ 5 ᴍɪɴᴜᴛᴇs."
-             )
+            # ⏳ AUTO DELETE (ONLY IF MESSAGE SENT)
+            warn = await message.reply_text(
+                "⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+                "›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ 5 ᴍɪɴᴜᴛᴇs."
+            )
 
-             await asyncio.sleep(300)
+            await asyncio.sleep(300)
  
-             for x in sent_messages:
-                 try:
-                     await x.delete()
-                 except:
-                     pass
+            for x in sent_messages:
+                try:
+                    await x.delete()
+                except:
+                    pass
 
-             try:
-                 await warn.delete()
-             except:
-                 pass
+            try:
+                await warn.delete()
+            except:
+                pass
 
-             return
+            return
 
 
         except Exception as e:
