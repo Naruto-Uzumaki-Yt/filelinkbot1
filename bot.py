@@ -65,48 +65,6 @@ app = Client(
     bot_token=BOT_TOKEN
 ) 
 
-async def build_system_panel():
-    bot_uptime = int(time.time() - START_TIME)
-    b_d, rem = divmod(bot_uptime, 86400)
-    b_h, rem = divmod(rem, 3600)
-    b_m, b_s = divmod(rem, 60)
-
-    boot_time = psutil.boot_time()
-    sys_uptime = int(time.time() - boot_time)
-    s_d, rem = divmod(sys_uptime, 86400)
-    s_h, rem = divmod(rem, 3600)
-    s_m, s_s = divmod(rem, 60)
-
-    mem = psutil.virtual_memory()
-    ram_used = mem.used / (1024 ** 3)
-    ram_total = mem.total / (1024 ** 3)
-
-    disk = psutil.disk_usage("/")
-    disk_used = disk.used / (1024 ** 3)
-    disk_total = disk.total / (1024 ** 3)
-
-    cpu = psutil.cpu_percent(interval=0.3)
-
-    start = time.time()
-    await asyncio.sleep(0.05)
-    latency = round((time.time() - start) * 1000, 2)
-
-    text = (
-        "**💻 Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
-        f"**Cᴘᴜ Usᴀɢᴇ**: {cpu}%\n"
-        f"**Rᴀᴍ Usᴀɢᴇ**: {ram_used:.2f}/{ram_total:.2f} GB\n"
-        f"**Dɪsᴋ Usᴀɢᴇ**: {disk_used:.2f}/{disk_total:.2f} GB\n\n"
-        f"**Bᴏᴛ Uᴘᴛɪᴍᴇ**: {b_d}d {b_h}h {b_m}m\n"
-        f"**Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ**: {s_d}d {s_h}h {s_m}m\n"
-        f"**Lᴀᴛᴇɴᴄʏ**: {latency} ms"
-    )
-
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_system")]
-    ])
-
-    return text, keyboard
-
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
@@ -552,25 +510,6 @@ async def stats(client, message: Message):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
-@app.on_message(filters.command("system") & filters.private)
-async def system_info(client, message: Message):
-    try:
-        text, keyboard = await build_system_panel()
-        photo = random.choice(IMAGES)
-
-        await message.reply_photo(
-            photo=photo,
-            caption=text,
-            reply_markup=keyboard
-        )
-    except Exception as e:
-        await message.reply_text(f"Sʏsᴛᴇᴍ Eʀʀᴏʀ: {e}")
-    
-# ------------------------- #
-# Don't Remove Credit 
-# Owner @Mr_Mohammed_29
-# ------------------------- #
-
 # BROADCAST
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
@@ -613,18 +552,7 @@ async def broadcast(client, message: Message):
 @app.on_message(
     filters.private &
     ~filters.service &
-    ~filters.command([
-        "start",
-        "batch",
-        "stats",
-        "broadcast",
-        "addadmin",
-        "removeadmin",
-        "adminlist",
-        "alive",
-        "id",
-        "system"
-    ])
+    ~filters.command(["addadmin", "removeadmin", "adminlist"])
 )
 async def auto_add_user(client, message: Message):
     if message.from_user:
@@ -729,52 +657,6 @@ async def admin_list(client, message: Message):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
-#ID
-@app.on_message(filters.command("id") & filters.private)
-async def get_id(client, message: Message):
-
-    user = message.from_user
-
-    text = (
-        f"👤 Yᴏᴜʀ Iɴғᴏ\n\n"
-        f"🆔 ID: {user.id}\n"
-        f"👤 Usᴇʀɴᴀᴍᴇ: @{user.username if user.username else 'No Username'}"
-    )
-
-    await message.reply_text(
-        text,
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⧉ ᴄᴏᴘʏ ɪᴅ", callback_data="copy_id"),
-                ]
-            ]
-        )
-    )
-# ------------------------- #
-# Don't Remove Credit 
-# Owner @Mr_Mohammed_29
-# ------------------------- #
-
-#Alive
-@app.on_message(filters.command("alive") & filters.private)
-async def alive(client, message: Message):
-    try:
-        await message.reply_sticker(
-            "CAACAgUAAxkBAAIPvWo2rZbuFp73D4Z-lQ_c7lArJ7wPAAL5HQACSBxgVe2VLHdaKkQ1PAQ"
-        )
-    except:
-        pass
-
-    await message.reply_text(
-        "❤️ 𝗬𝗼𝘂 𝗔𝗿𝗲 𝗟𝘂𝗰𝗸𝘆 𝗜 𝗮𝗺 𝗔𝗹𝗶𝘃𝗲\n\n𝗨𝘀𝗲 /start 𝗧𝗼 𝗖𝗼𝗻𝘁𝗶𝗻𝘂𝗲."
-    )
-
-# ------------------------- #
-# Don't Remove Credit 
-# Owner @Mr_Mohammed_29
-# ------------------------- #
-
 # ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
 async def about_callback(client, query):
@@ -832,15 +714,6 @@ async def home_callback(client, query):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
-@app.on_callback_query(filters.regex("copy_id"))
-async def copy_id(_, query):
-    await query.answer(f"Yᴏᴜʀ ID: {query.from_user.id}", show_alert=True)
-    
-# ------------------------- #
-# Don't Remove Credit 
-# Owner @Mr_Mohammed_29
-# ------------------------- #
-
 # REFRESH STATS 
 @app.on_callback_query(filters.regex("refresh_stats"))
 async def refresh_stats(client, query):
@@ -878,17 +751,115 @@ async def refresh_stats(client, query):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
-@app.on_callback_query(filters.regex("refresh_system"))
-async def refresh_system(client, query):
-    text, keyboard = await build_system_panel()
+# ------------------------- #
+# ALIVE COMMAND
+# ------------------------- #
 
-    await query.message.edit_caption(
-        caption=text,
-        reply_markup=keyboard
+@app.on_message(filters.command("alive"))
+async def alive(client, message):
+
+    await message.reply_photo(
+        photo="https://graph.org/file/ffdbc01d09855874311b1-5f3f1eae52d984db3d.jpg",
+        caption=(
+            "❤️ **Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\n\nPʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!**"
+        )
     )
 
-    await query.answer("Sʏsᴛᴇᴍ Uᴘᴅᴀᴛᴇᴅ ✔")
-    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+# ------------------------- #
+# ID COMMAND
+# ------------------------- #
+
+@app.on_message(filters.command("id"))
+async def get_id(client, message):
+
+    user = message.from_user
+
+    text = (
+        "👤 **Usᴇʀ Iɴғᴏʀᴍᴀᴛɪᴏɴ**\n\n"
+        f"➲ Fɪʀsᴛ Nᴀᴍᴇ: {user.first_name or 'None'}\n"
+        f"➲ Lᴀsᴛ Nᴀᴍᴇ: {user.last_name or 'None'}\n"
+        f"➲ Usᴇʀɴᴀᴍᴇ: {user.username or 'None'}\n"
+        f"➲ Tᴇʟᴇɢʀᴀᴍ ID: {user.id}\n"
+        f"➲ Dᴀᴛᴀ Cᴇɴᴛʀᴇ: {user.dc_id or 'Unknown'}"
+    )
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    "👤 Vɪᴇᴡ Pʀᴏғɪʟᴇ",
+                    url=f"tg://user?id={user.id}"
+                )
+            ]
+        ]
+    )
+
+    try:
+        photos = await client.get_profile_photos(
+            user.id,
+            limit=1
+        )
+
+        if photos:
+            await message.reply_photo(
+                photos[0].file_id,
+                caption=text,
+                reply_markup=keyboard
+            )
+        else:
+            await message.reply_text(
+                text,
+                reply_markup=keyboard
+            )
+
+    except:
+        await message.reply_text(
+            text,
+            reply_markup=keyboard
+        )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+# ------------------------- #
+# SYSTEM COMMAND
+# ------------------------- #
+
+@app.on_message(filters.command("system"))
+async def system_info(client, message):
+
+    os_name = platform.system()
+
+    uptime = int(time.time() - START_TIME)
+    d, rem = divmod(uptime, 86400)
+    h, rem = divmod(rem, 3600)
+    m, s = divmod(rem, 60)
+
+    sys_time = int(time.time() - psutil.boot_time())
+    sd, rem = divmod(sys_time, 86400)
+    sh, rem = divmod(rem, 3600)
+    sm, ss = divmod(rem, 60)
+
+    ram = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
+
+    text = (
+        "💻 **Sʏsᴛᴇᴍ Iɴғᴏʀᴍᴀᴛɪᴏɴ Pᴀɴᴇʟ**\n\n"
+        f"🖥️ OS Dᴇᴛᴀɪʟs: {os_name}\n"
+        f"⏰ Bᴏᴛ Uᴘᴛɪᴍᴇ: {d}ᴅ : {h}ʜ : {m}ᴍ : {s}s\n"
+        f"🔄 Sʏsᴛᴇᴍ Uᴘᴛɪᴍᴇ: {sd}ᴅ : {sh}ʜ : {sm}ᴍ : {ss}s\n"
+        f"💾 Rᴀᴍ Usᴀɢᴇ: {ram.used/(1024**3):.2f} GB / {ram.total/(1024**3):.2f} GB\n"
+        f"📁 Dɪsᴋ Usᴀɢᴇ: {disk.used/(1024**3):.2f} GB / {disk.total/(1024**3):.2f} GB"
+    )
+
+    await message.reply_text(text)
+
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
