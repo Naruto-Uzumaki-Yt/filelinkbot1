@@ -392,7 +392,6 @@ async def start(client, message: Message):
 
         except Exception as e:
             print(f"Bᴀᴛᴄʜ Sʏsᴛᴇᴍ Eʀʀᴏʀ: {e}")
-            return await message.reply_text("❌ 𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗟𝗶𝗻𝗸 𝗼𝗿 𝗖𝗼𝗿𝗿𝘂𝗽𝘁𝗲𝗱 𝗟𝗶𝗻𝗸.")
             
             # fallback → single file mode
             file_unique_id = message.command[1]
