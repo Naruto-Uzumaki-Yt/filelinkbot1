@@ -356,14 +356,14 @@ async def start(client, message: Message):
                     sent_messages.append(sent)
                     await asyncio.sleep(0.3)
 
-                    except Exception as e:
-                        print(e)
+                except Exception as e:
+                    print(e)
 
-                await wait.delete()
+            await wait.delete()
             
-            except Exception as e:
-                print(e)
-                return
+        except Exception as e:
+            print(e)
+            return
 
                 warn = await message.reply_text(
                     " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
