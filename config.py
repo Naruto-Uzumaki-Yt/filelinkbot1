@@ -33,10 +33,30 @@ if OWNER_ID:
     OWNER_ID = int(OWNER_ID)
 else:
     raise Exception("OWNER_ID is not set in environment variables")
+
 PORT = int(os.getenv("PORT", 10000))
 
 # ------------------------- #
+# SAFETY FIX ADDED (IMPORTANT)
+# ------------------------- #
+
+# Validate required variables (prevents silent crash)
+if not API_HASH:
+    raise Exception("API_HASH is not set in environment variables")
+
+if not BOT_TOKEN:
+    raise Exception("BOT_TOKEN is not set in environment variables")
+
+if not MONGO_URI:
+    raise Exception("MONGO_URI is not set in environment variables")
+
+if not BOT_USERNAME:
+    raise Exception("BOT_USERNAME is not set in environment variables")
+
+if not CHANNEL_ID:
+    raise Exception("CHANNEL_ID is not set in environment variables")
+
+# ------------------------- #
 # Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
+# Owner @Mr_Mohammed_29
 # ------------------------- #
