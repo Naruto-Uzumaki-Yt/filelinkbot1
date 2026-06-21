@@ -87,6 +87,7 @@ def build_system_panel():
     cpu = psutil.cpu_percent(interval=0.3)
 
     start = time.time()
+    await asyncio.sleep(0.05)
     latency = round((time.time() - start) * 1000, 2)
 
     text = (
@@ -123,33 +124,27 @@ BATCH_USERS = {}
 # ================= GET MESSAGE ID =================
 
 async def get_message_id(client, link):
-
     try:
         link = link.strip()
 
         if "/c/" in link:
-
             parts = link.split("/")
-
             chat_id = int("-100" + parts[-2])
             msg_id = int(parts[-1])
-
             return chat_id, msg_id
 
-        match = re.search(r"t\.me/([^/]+)/(\d+)", link)
+        if "t.me/" in link:
+            match = re.search(r"t\.me/([^/]+)/(\d+)", link)
+            if match:
+                username = match.group(1)
+                msg_id = int(match.group(2))
 
-        if match:
-
-            username = match.group(1)
-            msg_id = int(match.group(2))
-
-            chat = await client.get_chat(username)
-
-            return chat.id, msg_id
+                chat = await client.get_chat(username)
+                return chat.id, msg_id
 
         return None, None
 
-    except:
+    except Exception:
         return None, None
 
 # ------------------------- #
@@ -167,7 +162,7 @@ async def batch_command(client, message):
     if user_id != OWNER_ID and not await is_admin(user_id):
 
         return await message.reply_text(
-            "ғᴜᴄᴋ ʏᴏᴜ, ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃."
+            " ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃."
         )
 
     BATCH_USERS[user_id] = {
@@ -304,12 +299,16 @@ async def start(client, message: Message):
         # ================= BATCH LINK =================
 
         try:
-
             decoded = base64.urlsafe_b64decode(
                 param + "=" * (-len(param) % 4)
             ).decode("utf-8", errors="ignore")
 
-            if decoded.startswith("batch:"):
+        except Exception:
+            return
+
+        # extra safety check
+        if not decoded.startswith("batch:"):
+            return
 
                 _, chat_id, first_id, last_id = decoded.split(":")
 
@@ -321,7 +320,7 @@ async def start(client, message: Message):
 
                 wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
 
-                for msg_id in range(first_id, last_id + 1):
+                for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
 
                     try:
                         msg = await client.get_messages(chat_id, msg_id)
@@ -539,7 +538,9 @@ async def save_media(client, message: Message):
     if message.video:
         file = message.video
         file_type = "video"
-        thumb = file.thumbs[-1].file_id if file.thumbs else None
+        thumb = None
+        if hasattr(file, "thumbs") and file.thumbs:
+            thumb = file.thumbs[-1].file_id
 
     elif message.audio:
         file = message.audio
@@ -649,6 +650,9 @@ async def broadcast(client, message: Message):
             await msg.copy(chat_id=int(user_id))
             sent += 1
             await asyncio.sleep(0.2)
+
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
 
         except Exception as e:
             failed += 1
@@ -938,7 +942,7 @@ async def refresh_system(client, query):
 @app.on_message(filters.all)
 async def debug_errors(client, message):
     try:
-        pass
+        print(f"[LOG] {message.chat.id} -> {message.text}")
     except Exception:
         print(traceback.format_exc())
 
