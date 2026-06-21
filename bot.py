@@ -323,43 +323,43 @@ async def start(client, message: Message):
             try:
                 msg = await client.get_messages(chat_id, msg_id)
 
-            if not msg:
-                continue
+                if not msg:
+                    continue
 
-            original_caption = msg.caption or ""
+                original_caption = msg.caption or ""
 
-            caption = (
-                f"**{original_caption}**\n\n"
-                f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
-            )
+                caption = (
+                    f"**{original_caption}**\n\n"
+                    f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+                )
 
-            buttons = InlineKeyboardMarkup(
-                [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
-            )
+                buttons = InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
+                )
 
-            if msg.video:
-                sent = await message.reply_video(msg.video.file_id, caption=caption, reply_markup=buttons)
+                if msg.video:
+                    sent = await message.reply_video(msg.video.file_id, caption=caption, reply_markup=buttons)
+  
+                elif msg.audio:
+                    sent = await message.reply_audio(msg.audio.file_id, caption=caption, reply_markup=buttons)
+ 
+                elif msg.document:
+                    sent = await message.reply_document(msg.document.file_id, caption=caption, reply_markup=buttons)
 
-            elif msg.audio:
-                sent = await message.reply_audio(msg.audio.file_id, caption=caption, reply_markup=buttons)
+                elif msg.sticker:
+                    sent = await message.reply_sticker(msg.sticker.file_id)
 
-            elif msg.document:
-                sent = await message.reply_document(msg.document.file_id, caption=caption, reply_markup=buttons)
+                elif msg.animation:
+                    sent = await message.reply_animation(msg.animation.file_id, caption=caption, reply_markup=buttons)
 
-            elif msg.sticker:
-                sent = await message.reply_sticker(msg.sticker.file_id)
+                else:
+                    continue
 
-            elif msg.animation:
-                sent = await message.reply_animation(msg.animation.file_id, caption=caption, reply_markup=buttons)
+                sent_messages.append(sent)
+                await asyncio.sleep(0.3)
 
-            else:
-                continue
-
-            sent_messages.append(sent)
-            await asyncio.sleep(0.3)
-
-            except Exception as e:
-                print(e)
+                except Exception as e:
+                    print(e)
 
         await wait.delete()
 
