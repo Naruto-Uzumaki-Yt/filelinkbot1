@@ -303,7 +303,6 @@ async def start(client, message: Message):
                 param + "=" * (-len(param) % 4)
             ).decode("utf-8", errors="ignore")
 
-        
             if not decoded.startswith("batch:"):
                 return
 
@@ -336,19 +335,37 @@ async def start(client, message: Message):
                     )
 
                     if msg.video:
-                        sent = await message.reply_video(msg.video.file_id, caption=caption, reply_markup=buttons)
-  
+                        sent = await message.reply_video(
+                            msg.video.file_id,
+                            caption=caption,
+                            reply_markup=buttons
+                        )
+
                     elif msg.audio:
-                        sent = await message.reply_audio(msg.audio.file_id, caption=caption, reply_markup=buttons)
- 
+                        sent = await message.reply_audio(
+                            msg.audio.file_id,
+                            caption=caption,
+                            reply_markup=buttons
+                        )
+
                     elif msg.document:
-                        sent = await message.reply_document(msg.document.file_id, caption=caption, reply_markup=buttons)
+                        sent = await message.reply_document(
+                            msg.document.file_id,
+                            caption=caption,
+                            reply_markup=buttons
+                        )
 
                     elif msg.sticker:
-                        sent = await message.reply_sticker(msg.sticker.file_id)
+                        sent = await message.reply_sticker(
+                            msg.sticker.file_id
+                        )
 
                     elif msg.animation:
-                        sent = await message.reply_animation(msg.animation.file_id, caption=caption, reply_markup=buttons)
+                        sent = await message.reply_animation(
+                            msg.animation.file_id,
+                            caption=caption,
+                            reply_markup=buttons
+                        )
 
                     else:
                         continue
@@ -360,35 +377,32 @@ async def start(client, message: Message):
                     print(e)
 
             await wait.delete()
-            
+
         except Exception as e:
             print(e)
             return
+            
+    warn = await message.reply_text(
+        " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+        " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
+        " ›› Sᴏ ᴘʟᴇᴀsᴇ sᴀᴠᴇ ᴛʜᴇᴍ.",
+        parse_mode=ParseMode.MARKDOWN
+    )
 
-                warn = await message.reply_text(
-                    " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-                    " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
-                    " ›› Sᴏ ᴘʟᴇᴀsᴇ sᴀᴠᴇ ᴛʜᴇᴍ.",
-                    parse_mode=ParseMode.MARKDOWN
-                )
+    await asyncio.sleep(300)
 
-                await asyncio.sleep(300)
+    for x in sent_messages:
+        try:
+            await x.delete()
+        except:
+            pass
 
-                for x in sent_messages:
-                    try:
-                        await x.delete()
-                    except:
-                        pass
+    try:
+        await warn.delete()
+    except:
+        pass
 
-                try:
-                    await warn.delete()
-                except:
-                    pass
-
-                return
-
-        except Exception as e:
-            return
+    return
 
         file_unique_id = message.command[1]
         data = await get_file(file_unique_id)
@@ -400,7 +414,7 @@ async def start(client, message: Message):
         caption = (
     f"**{original_caption}**\n\n"
     f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
-)
+        )
 
         buttons = InlineKeyboardMarkup(
             [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
