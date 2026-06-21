@@ -552,9 +552,20 @@ async def broadcast(client, message: Message):
 @app.on_message(
     filters.private &
     ~filters.service &
-    ~filters.command(["addadmin", "removeadmin", "adminlist"])
+    ~filters.command([
+        "start",
+        "batch",
+        "stats",
+        "broadcast",
+        "addadmin",
+        "removeadmin",
+        "adminlist",
+        "alive",
+        "id",
+        "system"
+    ])
 )
-async def auto_add_user(client, message: Message):
+async def auto_add_user(client, message):
     if message.from_user:
         await add_user(message.from_user.id)
         
@@ -761,7 +772,8 @@ async def alive(client, message):
     await message.reply_photo(
         photo="https://graph.org/file/ffdbc01d09855874311b1-5f3f1eae52d984db3d.jpg",
         caption=(
-            "❤️ **Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\n\nPʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!**"
+            "❤️ **Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\n\n"
+            "Pʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!**"
         )
     )
 
@@ -827,6 +839,7 @@ async def get_id(client, message):
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
 # ------------------------- #
+
 # ------------------------- #
 # SYSTEM COMMAND
 # ------------------------- #
