@@ -896,7 +896,7 @@ async def system_info(client, message):
     )
 
     await message.reply_photo(
-        photo="YOUR_IMAGE_LINK",
+        photo="https://graph.org/file/3999f429ad9b0b1317f28-7591e7676c147975c9.jpg",
         caption=text
     )
 # ------------------------- #
