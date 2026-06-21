@@ -304,21 +304,21 @@ async def start(client, message: Message):
             ).decode("utf-8", errors="ignore")
 
             if not decoded.startswith("batch:"):
-                return
+                raise Exception("Not batch link")
 
-            _, chat_id, first_id, last_id = decoded.split(":")
+             _, chat_id, first_id, last_id = decoded.split(":")
+    
+             chat_id = int(chat_id)
+             first_id = int(first_id)
+             last_id = int(last_id)
 
-            chat_id = int(chat_id)
-            first_id = int(first_id)
-            last_id = int(last_id)
+             sent_messages = []
 
-            sent_messages = []
+             wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
 
-            wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
-
-            for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
-                try:
-                    msg = await client.get_messages(chat_id, msg_id)
+             for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
+                 try:
+                     msg = await client.get_messages(chat_id, msg_id)
 
                     if not msg:
                         continue
@@ -327,45 +327,29 @@ async def start(client, message: Message):
 
                     caption = (
                         f"**{original_caption}**\n\n"
-                        f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+                        f"**›› Cʜᴀɴɴᴇʟ :** [Anime Updates](https://t.me/Anime_UpdatesAU)"
                     )
 
                     buttons = InlineKeyboardMarkup(
                         [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
                     )
 
+                    sent = None
+
                     if msg.video:
-                        sent = await message.reply_video(
-                            msg.video.file_id,
-                            caption=caption,
-                            reply_markup=buttons
-                        )
+                        sent = await message.reply_video(msg.video.file_id, caption=caption, reply_markup=buttons)
 
                     elif msg.audio:
-                        sent = await message.reply_audio(
-                            msg.audio.file_id,
-                            caption=caption,
-                            reply_markup=buttons
-                        )
+                        sent = await message.reply_audio(msg.audio.file_id, caption=caption, reply_markup=buttons)
 
                     elif msg.document:
-                        sent = await message.reply_document(
-                            msg.document.file_id,
-                            caption=caption,
-                            reply_markup=buttons
-                        )
+                        sent = await message.reply_document(msg.document.file_id, caption=caption, reply_markup=buttons)
 
                     elif msg.sticker:
-                        sent = await message.reply_sticker(
-                            msg.sticker.file_id
-                        )
+                        sent = await message.reply_sticker(msg.sticker.file_id)
 
                     elif msg.animation:
-                        sent = await message.reply_animation(
-                            msg.animation.file_id,
-                            caption=caption,
-                            reply_markup=buttons
-                        )
+                        sent = await message.reply_animation(msg.animation.file_id, caption=caption, reply_markup=buttons)
 
                     else:
                         continue
@@ -373,142 +357,96 @@ async def start(client, message: Message):
                     sent_messages.append(sent)
                     await asyncio.sleep(0.3)
 
-                except Exception as e:
-                    print(e)
+                 except Exception as e:
+                     print(f"Batch send error: {e}")
 
-            await wait.delete()
+             await wait.delete()
+
+             # ⏳ AUTO DELETE (ONLY IF MESSAGE SENT)
+             warn = await message.reply_text(
+                 "⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+                 "›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ 5 ᴍɪɴᴜᴛᴇs."
+             )
+
+             await asyncio.sleep(300)
+ 
+             for x in sent_messages:
+                 try:
+                     await x.delete()
+                 except:
+                     pass
+
+             try:
+                 await warn.delete()
+             except:
+                 pass
+
+             return
+
 
         except Exception as e:
-            print(e)
+            print(f"Batch system error: {e}")
+
+            # fallback → single file mode
+            file_unique_id = message.command[1]
+            data = await get_file(file_unique_id)
+
+            if not data:
+                return await message.reply_text("🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ.")
+
+            original_caption = data.get("caption", "")
+
+            caption = (
+                f"**{original_caption}**\n\n"
+                f"**›› Cʜᴀɴɴᴇʟ :** [Anime Updates](https://t.me/Anime_UpdatesAU)"
+            )
+
+            buttons = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
+            )
+
+            sent = None
+
+            if data.get("file_type") == "video":
+                sent = await message.reply_video(data["file_id"], caption=caption, reply_markup=buttons)
+
+            elif data.get("file_type") == "audio":
+                sent = await message.reply_audio(data["file_id"], caption=caption, reply_markup=buttons)
+
+            elif data.get("file_type") == "document":
+                sent = await message.reply_document(data["file_id"], caption=caption, reply_markup=buttons)
+
+            elif data.get("file_type") == "sticker":
+                sent = await message.reply_sticker(data["file_id"])
+
+            elif data.get("file_type") == "animation":
+                sent = await message.reply_animation(data["file_id"], caption=caption, reply_markup=buttons)
+
+            else:
+                return await message.reply_text("‼️ Unsupported format")
+
+            warn = await message.reply_text(
+                "⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
+                "›› File will be deleted in 5 minutes."
+            )
+
+            m2 = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ...")
+            await asyncio.sleep(0.4)
+            await m2.edit_text("sᴜɴ ɢᴏᴅ ɴɪᴋᴀ...")
+            await asyncio.sleep(0.5)
+            await m2.delete()
+
+            await asyncio.sleep(300)
+
+            try:
+                if sent:
+                    await sent.delete()
+                await warn.delete()
+            except:
+                pass
+
             return
-            
-    warn = await message.reply_text(
-        " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-        " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
-        " ›› Sᴏ ᴘʟᴇᴀsᴇ sᴀᴠᴇ ᴛʜᴇᴍ.",
-        parse_mode=ParseMode.MARKDOWN
-    )
 
-    await asyncio.sleep(300)
-
-    for x in sent_messages:
-        try:
-            await x.delete()
-        except:
-            pass
-
-    try:
-        await warn.delete()
-    except:
-        pass
-
-    return
-
-        file_unique_id = message.command[1]
-        data = await get_file(file_unique_id)
-
-        if not data:
-            return await message.reply_text("🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ.")
-
-        original_caption = data.get("caption", "")
-        caption = (
-    f"**{original_caption}**\n\n"
-    f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
-        )
-
-        buttons = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
-        )
-
-        if data.get("file_type") == "video":
-            sent = await message.reply_video(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                thumb=data.get("thumb") if data.get("thumb") else None,
-                supports_streaming=True,
-                parse_mode=ParseMode.MARKDOWN
-        ) 
-
-        elif data.get("file_type") == "audio":
-            sent = await message.reply_audio(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=ParseMode.MARKDOWN
-        )
-
-        elif data.get("file_type") == "document":
-            sent = await message.reply_document(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=ParseMode.MARKDOWN
-        )
-
-        elif data.get("file_type") == "sticker":
-            sent = await message.reply_sticker(
-                data["file_id"]
-        )
-
-        elif data.get("file_type") == "animation":  # GIF
-            sent = await message.reply_animation(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=ParseMode.MARKDOWN
-        )
-
-        else:
-            return await message.reply_text("‼️ Unsupported format")
-
-        warn = await message.reply_text(
-    " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
-    " ›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.\n"
-    " ›› Sᴏ ᴘʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜᴇᴍ ᴛᴏ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs.\n\n"
-    " ›› 𝗡𝗼𝘁𝗲: ᴜsᴇ 𝗩𝗟𝗖 𝗣𝗹𝗮𝘆𝗲𝗿 ᴏʀ 𝗠𝗫 𝗣𝗹𝗮𝘆𝗲𝗿 ғᴏʀ ʙᴇsᴛ ᴇxᴘᴇʀɪᴇɴᴄᴇ.",
-    parse_mode=ParseMode.MARKDOWN
-        )
-
-        # AFTER FILE ANIMATION
-        m2 = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻. . .")
-        await asyncio.sleep(0.4)
-        await m2.edit_text("sᴜɴ ɢᴏᴅ ɴɪᴋᴀ!...")
-        await asyncio.sleep(0.5)
-        await m2.delete()
-
-        await asyncio.sleep(300)
-
-        try:
-           await sent.delete()
-           await warn.delete()
-        except:
-            pass
-        return
-
-    # START MESSAGE WITH BUTTONS
-    photo = random.choice(IMAGES)
-
-    await message.reply_photo(
-        photo=photo,
-        caption=(
-            "𝗛𝗲𝗹𝗹𝗼 ♡,\n\n"
-            "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
-        ),
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU"),
-                    InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")
-                ],
-                [
-                    InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/+ssaZDrj3Wr4wNzI1")
-                ]
-            ]
-        ),
-        parse_mode=ParseMode.MARKDOWN
-    )
-    
 # ------------------------- #
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
