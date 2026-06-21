@@ -105,7 +105,7 @@ async def build_system_panel():
         [InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_system")]
     ])
 
-    text, keyboard = await build_system_panel()
+    return text, keyboard
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -132,6 +132,9 @@ async def get_message_id(client, link):
             parts = link.split("/")
             chat_id = int("-100" + parts[-2])
             msg_id = int(parts[-1])
+            
+            await client.get_chat(chat_id)
+            
             return chat_id, msg_id
 
         if "t.me/" in link:
@@ -191,10 +194,7 @@ async def batch_command(client, message):
         "broadcast",
         "addadmin",
         "removeadmin",
-        "adminlist",
-        "alive",
-        "system",
-        "id"
+        "adminlist"
     ])
 )
 
