@@ -613,7 +613,18 @@ async def broadcast(client, message: Message):
 @app.on_message(
     filters.private &
     ~filters.service &
-    ~filters.command(["addadmin", "removeadmin", "adminlist"])
+    ~filters.command([
+        "start",
+        "batch",
+        "stats",
+        "broadcast",
+        "addadmin",
+        "removeadmin",
+        "adminlist",
+        "alive",
+        "id",
+        "system"
+    ])
 )
 async def auto_add_user(client, message: Message):
     if message.from_user:
@@ -718,6 +729,7 @@ async def admin_list(client, message: Message):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
+#ID
 @app.on_message(filters.command("id") & filters.private)
 async def get_id(client, message: Message):
 
@@ -744,6 +756,7 @@ async def get_id(client, message: Message):
 # Owner @Mr_Mohammed_29
 # ------------------------- #
 
+#Alive
 @app.on_message(filters.command("alive") & filters.private)
 async def alive(client, message: Message):
     try:
