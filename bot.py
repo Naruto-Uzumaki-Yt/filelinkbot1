@@ -303,65 +303,67 @@ async def start(client, message: Message):
                 param + "=" * (-len(param) % 4)
             ).decode("utf-8", errors="ignore")
 
-        except Exception:
-            return
+        
+            if not decoded.startswith("batch:"):
+                return
 
-        if not decoded.startswith("batch:"):
-            return
+            _, chat_id, first_id, last_id = decoded.split(":")
 
-        _, chat_id, first_id, last_id = decoded.split(":")
+            chat_id = int(chat_id)
+            first_id = int(first_id)
+            last_id = int(last_id)
 
-        chat_id = int(chat_id)
-        first_id = int(first_id)
-        last_id = int(last_id)
+            sent_messages = []
 
-        sent_messages = []
+            wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
 
-        wait = await message.reply_text("⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs...")
+            for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
+                try:
+                    msg = await client.get_messages(chat_id, msg_id)
 
-        for msg_id in range(first_id, min(last_id + 1, first_id + 500)):
-            try:
-                msg = await client.get_messages(chat_id, msg_id)
+                    if not msg:
+                        continue
 
-                if not msg:
-                    continue
+                    original_caption = msg.caption or ""
 
-                original_caption = msg.caption or ""
+                    caption = (
+                        f"**{original_caption}**\n\n"
+                        f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
+                    )
 
-                caption = (
-                    f"**{original_caption}**\n\n"
-                    f"**›› Cʜᴀɴɴᴇʟ :** [ᴀɴɪᴍᴇ ᴜᴘᴅᴀᴛᴇs](https://t.me/Anime_UpdatesAU)"
-                )
+                    buttons = InlineKeyboardMarkup(
+                        [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
+                    )
 
-                buttons = InlineKeyboardMarkup(
-                    [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
-                )
-
-                if msg.video:
-                    sent = await message.reply_video(msg.video.file_id, caption=caption, reply_markup=buttons)
+                    if msg.video:
+                        sent = await message.reply_video(msg.video.file_id, caption=caption, reply_markup=buttons)
   
-                elif msg.audio:
-                    sent = await message.reply_audio(msg.audio.file_id, caption=caption, reply_markup=buttons)
+                    elif msg.audio:
+                        sent = await message.reply_audio(msg.audio.file_id, caption=caption, reply_markup=buttons)
  
-                elif msg.document:
-                    sent = await message.reply_document(msg.document.file_id, caption=caption, reply_markup=buttons)
+                    elif msg.document:
+                        sent = await message.reply_document(msg.document.file_id, caption=caption, reply_markup=buttons)
 
-                elif msg.sticker:
-                    sent = await message.reply_sticker(msg.sticker.file_id)
+                    elif msg.sticker:
+                        sent = await message.reply_sticker(msg.sticker.file_id)
 
-                elif msg.animation:
-                    sent = await message.reply_animation(msg.animation.file_id, caption=caption, reply_markup=buttons)
+                    elif msg.animation:
+                        sent = await message.reply_animation(msg.animation.file_id, caption=caption, reply_markup=buttons)
 
-                else:
-                    continue
+                    else:
+                        continue
 
-                sent_messages.append(sent)
-                await asyncio.sleep(0.3)
+                    sent_messages.append(sent)
+                    await asyncio.sleep(0.3)
 
-                except Exception as e:
-                    print(e)
+                    except Exception as e:
+                        print(e)
 
-        await wait.delete()
+                await wait.delete()
+            
+            except Exception as e:
+                print(e)
+                return
 
                 warn = await message.reply_text(
                     " ⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...\n\n"
