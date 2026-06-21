@@ -64,7 +64,7 @@ app = Client(
     bot_token=BOT_TOKEN
 ) 
 
-def build_system_panel():
+async def build_system_panel():
     bot_uptime = int(time.time() - START_TIME)
     b_d, rem = divmod(bot_uptime, 86400)
     b_h, rem = divmod(rem, 3600)
@@ -310,7 +310,7 @@ async def start(client, message: Message):
         if not decoded.startswith("batch:"):
             return
 
-                _, chat_id, first_id, last_id = decoded.split(":")
+             _, chat_id, first_id, last_id = decoded.split(":")
 
                 chat_id = int(chat_id)
                 first_id = int(first_id)
