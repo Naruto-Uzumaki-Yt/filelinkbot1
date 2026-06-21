@@ -1,60 +1,24 @@
-# ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
-# ------------------------- #
-
 import os
 
-API_ID = int(os.getenv("API_ID"))
-API_HASH = os.getenv("API_HASH")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+def must_get(name):
+    value = os.getenv(name)
+    if not value:
+        raise Exception(f"{name} is not set in environment variables")
+    return value
 
-# ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
-# ------------------------- #
+API_ID = int(must_get("API_ID"))
+API_HASH = must_get("API_HASH")
+BOT_TOKEN = must_get("BOT_TOKEN")
 
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = must_get("MONGO_URI")
 
-BOT_USERNAME = os.getenv("BOT_USERNAME")  # without @
+BOT_USERNAME = must_get("BOT_USERNAME")
 
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+CHANNEL_ID = int(must_get("CHANNEL_ID"))
 
-# ------------------------- #
-# Don't Remove Credit 
-# Ask Doubt @AU_Bot_Discussion 
-# Owner @Mr_Mohammed_29 
-# ------------------------- #
+OWNER_ID = int(must_get("OWNER_ID"))
 
-OWNER_ID = os.getenv("OWNER_ID")
-if OWNER_ID:
-    OWNER_ID = int(OWNER_ID)
-else:
-    raise Exception("OWNER_ID is not set in environment variables")
-
-PORT = int(os.getenv("PORT", 10000))
-
-# ------------------------- #
-# SAFETY FIX ADDED (IMPORTANT)
-# ------------------------- #
-
-# Validate required variables (prevents silent crash)
-if not API_HASH:
-    raise Exception("API_HASH is not set in environment variables")
-
-if not BOT_TOKEN:
-    raise Exception("BOT_TOKEN is not set in environment variables")
-
-if not MONGO_URI:
-    raise Exception("MONGO_URI is not set in environment variables")
-
-if not BOT_USERNAME:
-    raise Exception("BOT_USERNAME is not set in environment variables")
-
-if not CHANNEL_ID:
-    raise Exception("CHANNEL_ID is not set in environment variables")
+PORT = int(os.getenv("PORT", "10000"))
 
 # ------------------------- #
 # Don't Remove Credit 
